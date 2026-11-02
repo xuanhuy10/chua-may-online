@@ -6,3 +6,10 @@ services:
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /healthz
+    envVars:
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: GITHUB_REPO
+        value: xuanhuy10/chua-may-online
+      - key: GITHUB_TOKEN
+        sync: false

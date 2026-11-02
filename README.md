@@ -37,7 +37,22 @@ Chỉ dùng file do bạn tự thu âm hoặc có giấy phép dùng tự do.
    ```
 Để trống thì game dùng giọng đọc tiếng Việt của máy.
 
-## 6. Các file
+## 6. Quản trị chùa (thêm bài kinh, file tụng, lời kinh, bảng vàng)
+1. Lấy **mã quản trị**: trên Render vào service `chua-may-online` → **Environment** → dòng `ADMIN_KEY` (bấm con mắt để xem). Chạy trên máy thì mã in ra cửa sổ server, hoặc tự đặt: `set ADMIN_KEY=ma-cua-ban` trước `npm start`.
+2. Trong game bấm nút loa (Âm thanh) → kéo xuống mục **Quản trị chùa** → nhập mã → Đăng nhập. Nút khiên (Quản trị) hiện ra.
+3. Trong Quản trị:
+   - **Thêm bài kinh mới**: gõ tên → Thêm bài.
+   - **Tải file tụng**: chọn file mp3/m4a/mp4/webm (tối đa 30 MB) cho từng bài.
+   - **Lời & canh lời**: dán lời kinh (mỗi dòng một câu) → Lưu lời. Muốn chữ chạy khớp tiếng tụng: bấm *Bắt đầu canh lời*, nghe file và bấm *Dòng tiếp* (hoặc phím cách) đúng lúc mỗi câu bắt đầu → *Nghe thử* → *Lưu lời*.
+   - **Bảng vàng**: xóa từng người hoặc xóa toàn bộ.
+
+### Giữ dữ liệu lâu dài trên Render miễn phí
+Render miễn phí xóa ổ đĩa mỗi lần server ngủ dậy. Để không mất file tụng, lời kinh, bảng vàng, server lưu chúng vào nhánh `data` của repo GitHub:
+1. Vào https://github.com/settings/personal-access-tokens/new → *Repository access*: Only select repositories → chọn `chua-may-online` → *Permissions* → *Contents*: **Read and write** → Generate token.
+2. Trên Render: service `chua-may-online` → **Environment** → thêm `GITHUB_TOKEN` = token vừa tạo (đã có sẵn `GITHUB_REPO`) → Save. Render tự khởi động lại.
+Nhánh `data` không làm Render deploy lại.
+
+## 7. Các file
 - `server.js` – web server + phòng chơi chung (WebSocket) + lưu bảng vàng vào `data/board.json`.
 - `public/index.html` – game.
 - `public/net.js` – lớp nối game với server.
