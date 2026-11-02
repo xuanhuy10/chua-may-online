@@ -83,7 +83,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .sutra .line span{color:rgba(246,239,228,.42);transition:color .15s}
 .sutra .line span.on{color:var(--gold-2)}
 .sutra .line span.done{color:var(--ink)}
-.bottom{position:absolute;left:0;right:0;bottom:0;padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:8px;align-items:center;background:linear-gradient(transparent,rgba(12,8,6,.85) 40%)}
+.bottom{pointer-events:none;position:absolute;left:0;right:0;bottom:0;padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:8px;align-items:center;background:linear-gradient(transparent,rgba(12,8,6,.85) 40%)}
 .acts{display:flex;gap:8px;overflow-x:auto;max-width:100%;scrollbar-width:none;padding:2px}
 .acts::-webkit-scrollbar{display:none}
 .act{flex:none;min-width:70px;height:62px;padding:0 8px;border-radius:16px;background:rgba(52,34,25,.92);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:500}
@@ -189,9 +189,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
     <div class="morebox pe" id="moreBox" hidden></div>
     <div class="joy pe" id="joy" aria-label="Cần điều khiển: kéo để đi"><i id="joyKnob"></i></div>
     <button class="use pe" id="btnUse" type="button" hidden><span id="useTx"></span></button>
-    <div class="bottom pe">
-      <div class="acts" id="acts"></div>
-      <div class="dock">
+    <div class="bottom">
+      <div class="acts pe" id="acts"></div>
+      <div class="dock pe">
         <form id="chatForm" autocomplete="off"><input id="chatIn" maxlength="120" placeholder="Nhắn với mọi người trong chùa…" aria-label="Tin nhắn"><button class="send" type="submit">Gửi</button></form>
         <button class="ib" id="btnChat" aria-label="Lịch sử trò chuyện" title="Lịch sử trò chuyện"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span class="badge" id="chatBadge" hidden></span></button>
       </div>
@@ -412,7 +412,7 @@ async function decodeFile(blob) { const c = audio(); const ab = await blob.array
 
 /* ===================== MODULE: thế giới 2D ===================== */
 const W = 1400, H = 2400, XMIN = -1000, XMAX = 2400, BGS = .7;   // W: khung chánh điện; khuôn viên trải từ XMIN tới XMAX
-const HALL = { y1: 780, doorX0: 600, doorX1: 800 };
+const HALL = { y1: 780, doorX0: 545, doorX1: 855 };   // cửa chính rộng
 const WALL = 330, CEIL = 700;   // tường hậu ở y = 330; trần cao 700 đơn vị
 const STEPS = { y0: WALL, y1: 400, n: 5, rise: 15, x0: 150, x1: 1250 };   // 5 bậc thang lên bệ thờ
 const URN = { x: 700, y: 432 }, BELL = { x: 230, y: 1080 }, GATE = { x: 700, y: 2330 };
@@ -1999,7 +1999,7 @@ $("chatForm").addEventListener("submit", e => { e.preventDefault(); const i = $(
 
 const cv = $("cv"), g = cv.getContext("2d");
 let dpr = 1, vw = 0, vh = 0, scale = 1, camX = 700, camY = 560;
-function resize() { dpr = typeof GFX !== "undefined" ? dprFor(GFX.q) : Math.min(window.devicePixelRatio || 1, 1.5); vw = cv.clientWidth; vh = cv.clientHeight; cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr); scale = clamp(Math.min(vw / 520, vh / 600), .72, 1.5); }
+function resize() { dpr = typeof GFX !== "undefined" ? dprFor(GFX.q) : Math.min(window.devicePixelRatio || 1, 1.5); vw = cv.clientWidth; vh = cv.clientHeight; cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr); scale = clamp(Math.min(vw / 640, vh / 760), .62, 1.12); }   // thu nhỏ vừa phải để thấy rộng hơn
 window.addEventListener("resize", resize);
 function onTap(e) {
   audio(); loadPendingTracks(); if (!me.entered) return; togglePicker(false); $("moreBox").hidden = true;
@@ -2135,7 +2135,7 @@ const CAM = { back: 340, horizon: 0, Hc: 240, F: 0, ycam: 0, sc: 1 };
 let viewOn = false, viewK = 0;
 function viewParams() { const sT = Math.min(.74 * vh / 1000, vw / 900) * .8, back = sT * 1500 / scale; return { back, camY: 2280 - back, hz: vh * .84 - 420 * sT }; }   // camera đặt trong cổng, cả mặt tiền vừa khung
 function camSetup() {
-  const v = viewParams(), back3 = lerp(340, v.back, viewK), hz3 = lerp(vh * .78 - 240 * scale, v.hz, viewK), Hc3 = lerp(240, 420, viewK), k = fpK * (1 - viewK);   // k: mức góc nhìn thứ nhất
+  const v = viewParams(), back3 = lerp(340, v.back, viewK), hz3 = lerp(vh * .64 - 240 * scale, v.hz, viewK), Hc3 = lerp(240, 420, viewK), k = fpK * (1 - viewK);   // k: mức góc nhìn thứ nhất
   CAM.sc = scale; CAM.back = lerp(back3, 4, k); CAM.F = lerp(back3 * scale, vh * .72, k); CAM.Hc = lerp(Hc3, 128, k); CAM.ycam = camY + CAM.back; CAM.horizon = lerp(hz3, vh * .5 + pitch, k);
 }
 const sAt = y => CAM.F / Math.max(24, CAM.ycam - y);
@@ -2226,9 +2226,9 @@ function drawFrontFacade() {
     return [c, d];
   };
   shape([[80, 0], [HALL.doorX0, 0], [HALL.doorX0, D], [HALL.doorX1, D], [HALL.doorX1, 0], [1320, 0], [1320, CEIL - 20], [80, CEIL - 20]], "#4a1a12");
-  [[170, 470], [930, 1230]].forEach(([a, b]) => { const p = P(a, 250), q = P(b, 110); g.fillStyle = "#5a3016"; g.fillRect(p.x, p.y, q.x - p.x, q.y - p.y); g.strokeStyle = "rgba(227,176,75,.5)"; g.lineWidth = 1; for (let k = 1; k < 10; k++) { const xx = p.x + (q.x - p.x) * k / 10; g.beginPath(); g.moveTo(xx, p.y); g.lineTo(xx, q.y); g.stroke(); } });
-  for (const x of [80, 320, 600, 800, 1080, 1320]) { const a = P(x, 0), b = P(x, CEIL - 20); g.strokeStyle = "#8a2a1e"; g.lineWidth = 20 * a.s; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); g.fillStyle = "#c8962e"; g.fillRect(a.x - 11 * a.s, a.y - 24 * a.s, 22 * a.s, 5 * a.s); g.fillRect(b.x - 11 * a.s, b.y + 20 * a.s, 22 * a.s, 5 * a.s); }
-  [[566, "福慧雙修"], [834, "悲智圓融"]].forEach(([x, txt]) => { const p = P(x - 17, 250), q = P(x + 17, 60); g.fillStyle = "#1f0906"; g.fillRect(p.x, p.y, q.x - p.x, q.y - p.y); g.fillStyle = "#e3b04b"; g.font = "600 " + Math.max(6, 22 * p.s) + "px 'Noto Serif Display', serif"; g.textAlign = "center"; [...txt].forEach((ch, i) => g.fillText(ch, (p.x + q.x) / 2, p.y + (i + .8) * (q.y - p.y) / 4.2)); });
+  [[150, 440], [960, 1250]].forEach(([a, b]) => { const p = P(a, 250), q = P(b, 110); g.fillStyle = "#5a3016"; g.fillRect(p.x, p.y, q.x - p.x, q.y - p.y); g.strokeStyle = "rgba(227,176,75,.5)"; g.lineWidth = 1; for (let k = 1; k < 10; k++) { const xx = p.x + (q.x - p.x) * k / 10; g.beginPath(); g.moveTo(xx, p.y); g.lineTo(xx, q.y); g.stroke(); } });
+  for (const x of [80, 300, HALL.doorX0, HALL.doorX1, 1100, 1320]) { const a = P(x, 0), b = P(x, CEIL - 20); g.strokeStyle = "#8a2a1e"; g.lineWidth = 20 * a.s; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); g.fillStyle = "#c8962e"; g.fillRect(a.x - 11 * a.s, a.y - 24 * a.s, 22 * a.s, 5 * a.s); g.fillRect(b.x - 11 * a.s, b.y + 20 * a.s, 22 * a.s, 5 * a.s); }
+  [[HALL.doorX0 - 34, "福慧雙修"], [HALL.doorX1 + 34, "悲智圓融"]].forEach(([x, txt]) => { const p = P(x - 17, 250), q = P(x + 17, 60); g.fillStyle = "#1f0906"; g.fillRect(p.x, p.y, q.x - p.x, q.y - p.y); g.fillStyle = "#e3b04b"; g.font = "600 " + Math.max(6, 22 * p.s) + "px 'Noto Serif Display', serif"; g.textAlign = "center"; [...txt].forEach((ch, i) => g.fillText(ch, (p.x + q.x) / 2, p.y + (i + .8) * (q.y - p.y) / 4.2)); });
   const h0 = P(530, 420), h1 = P(870, 330); g.fillStyle = "#2a0c08"; g.fillRect(h0.x, h0.y, h1.x - h0.x, h1.y - h0.y); g.strokeStyle = "#e3b04b"; g.lineWidth = 2; g.strokeRect(h0.x + 3, h0.y + 3, h1.x - h0.x - 6, h1.y - h0.y - 6);
   g.fillStyle = "#f4dba0"; g.font = "700 " + Math.max(8, 36 * h0.s) + "px 'Noto Serif Display', Georgia, serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("CHÙA MÂY", (h0.x + h1.x) / 2, (h0.y + h1.y) / 2 + 1); g.textBaseline = "alphabetic";
   curve(-30, 1430, CEIL - 50, CEIL + 70, "#7a2e1f", 30);
