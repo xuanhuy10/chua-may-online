@@ -22,7 +22,7 @@ if (!ADMIN_KEY) { const f = path.join(DATA, "admin-key.txt"); try { ADMIN_KEY = 
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".mp3": "audio/mpeg", ".m4a": "audio/mp4", ".aac": "audio/aac", ".ogg": "audio/ogg", ".oga": "audio/ogg", ".opus": "audio/ogg", ".wav": "audio/wav", ".webm": "audio/webm", ".mp4": "video/mp4", ".flac": "audio/flac" };
 
 // ---- trạng thái chung: bài kinh (file + lời) và bảng vàng ----
-let state = { audio: {}, board: {} };
+let state = { audio: {}, board: {}, garden: {} };
 try { state = Object.assign(state, JSON.parse(fs.readFileSync(STATE_FILE, "utf8"))); } catch (e) {}
 // file tụng đặt sẵn trong public/audio (manifest.json) dùng khi bài đó chưa có file do quản trị tải lên
 try { const man = JSON.parse(fs.readFileSync(path.join(PUB, "audio", "manifest.json"), "utf8")); for (const [sid, f] of Object.entries(man)) if (f && !(state.audio[sid] && state.audio[sid].id)) state.audio[sid] = Object.assign({}, state.audio[sid], { id: path.basename(f), name: path.basename(f) }); } catch (e) {}
@@ -30,10 +30,12 @@ const SID_RE = /^[a-z0-9_]{1,24}$/, BLOB_RE = /^[a-f0-9]{20}\.[a-z0-9]{1,5}$/;
 const clip = (s, n) => String(s == null ? "" : s).slice(0, n);
 function cleanAudio(v) { const o = {}; if (typeof v.id === "string" && v.id) o.id = clip(path.basename(v.id), 60); if (v.name) o.name = clip(v.name, 60); if (v.lyr) o.lyr = clip(v.lyr, 20000); if (v.t) o.t = clip(v.t, 40); if (v.d) o.d = clip(v.d, 60); if (v.src) o.src = clip(v.src, 120); return o; }
 const audioDocs = () => Object.entries(state.audio).map(([id, v]) => ({ id, data: v }));   // mã bài tách riêng (v.id là mã file)
+const gardenDocs = () => Object.entries(state.garden || {}).map(([id, v]) => ({ id, data: v }));
 const boardTop = () => Object.entries(state.board).map(([id, v]) => Object.assign({ id }, v)).sort((a, b) => b.m - a.m).slice(0, 50);
 let saveT = 0, boardSendT = 0;
 function changed(kind) {
-  if (!saveT) saveT = setTimeout(() => { saveT = 0; fs.writeFile(STATE_FILE, JSON.stringify(state), () => {}); gh.queue("state.json", Buffer.from(JSON.stringify(state)), kind === "board" ? 120000 : 5000); }, 1500);
+  if (!saveT) saveT = setTimeout(() => { saveT = 0; fs.writeFile(STATE_FILE, JSON.stringify(state), () => {}); gh.queue("state.json", Buffer.from(JSON.stringify(state)), kind === "board" || kind === "garden" ? 120000 : 5000); }, 1500);
+  if (kind === "garden") return broadcast({ t: "garden", docs: gardenDocs() });
   if (kind === "board") { if (!boardSendT) boardSendT = setTimeout(() => { boardSendT = 0; broadcast({ t: "board", docs: boardTop() }); }, 1000); }
   else broadcast({ t: "audio", docs: audioDocs() });
 }
@@ -61,7 +63,7 @@ const gh = (() => {
     async get(p) { if (!on) return null; const r = await api("/contents/" + p + "?ref=" + BR, { headers: { Accept: "application/vnd.github.raw" } }); return r.ok ? Buffer.from(await r.arrayBuffer()) : null; }
   };
 })();
-if (gh.on) gh.get("state.json").then(buf => { if (!buf) return; try { const s = JSON.parse(buf.toString("utf8")); state.audio = Object.assign({}, s.audio || {}, state.audio); for (const [k, v] of Object.entries(s.board || {})) if (!state.board[k] || (state.board[k].m || 0) < (v.m || 0)) state.board[k] = v; fs.writeFile(STATE_FILE, JSON.stringify(state), () => {}); broadcast({ t: "audio", docs: audioDocs() }); broadcast({ t: "board", docs: boardTop() }); console.log("Đã nạp dữ liệu chùa từ GitHub"); } catch (e) {} }).catch(e => console.error("Nạp GitHub lỗi:", e.message));
+if (gh.on) gh.get("state.json").then(buf => { if (!buf) return; try { const s = JSON.parse(buf.toString("utf8")); state.audio = Object.assign({}, s.audio || {}, state.audio); for (const [k, v] of Object.entries(s.board || {})) if (!state.board[k] || (state.board[k].m || 0) < (v.m || 0)) state.board[k] = v; state.garden = Object.assign({}, s.garden || {}, state.garden); fs.writeFile(STATE_FILE, JSON.stringify(state), () => {}); broadcast({ t: "audio", docs: audioDocs() }); broadcast({ t: "board", docs: boardTop() }); console.log("Đã nạp dữ liệu chùa từ GitHub"); } catch (e) {} }).catch(e => console.error("Nạp GitHub lỗi:", e.message));
 else console.log("Chưa đặt GITHUB_TOKEN/GITHUB_REPO: dữ liệu chỉ lưu trên ổ đĩa server.");
 
 // ---- HTTP ----
@@ -113,7 +115,7 @@ wss.on("connection", ws => {
   if (clients.size >= MAX_PLAYERS) { send(ws, { t: "full" }); return ws.close(); }
   const c = { id: "p" + (nextId++).toString(36) + Math.random().toString(36).slice(2, 6), presence: {}, alive: true, budget: 60, last: Date.now() };
   clients.set(ws, c);
-  send(ws, { t: "hello", you: c.id, board: boardTop(), audio: audioDocs(), peers: [...clients.values()].filter(o => o !== c && Object.keys(o.presence).length).map(o => ({ peer: o.id, presence: o.presence })) });
+  send(ws, { t: "hello", you: c.id, board: boardTop(), audio: audioDocs(), garden: gardenDocs(), peers: [...clients.values()].filter(o => o !== c && Object.keys(o.presence).length).map(o => ({ peer: o.id, presence: o.presence })) });
   ws.on("pong", () => { c.alive = true; });
   ws.on("message", raw => {
     const now = Date.now(); c.budget = Math.min(80, c.budget + (now - c.last) * 0.04); c.last = now;   // ~40 tin/giây
@@ -122,6 +124,10 @@ wss.on("connection", ws => {
     if (m && m.t === "board_set" && typeof m.id === "string" && /^[\w-]{3,40}$/.test(m.id) && m.v) {
       const v = m.v; state.board[m.id] = { n: clip(v.n, 16), m: Math.max(0, Math.min(1e7, +v.m || 0)), lv: Math.max(0, Math.min(20, v.lv | 0)), w: Math.max(0, v.w | 0), wm: Math.max(0, Math.min(1e7, +v.wm || 0)), t: Date.now() };
       return changed("board");
+    }
+    if (m && m.t === "garden_set" && typeof m.id === "string" && /^(p[0-5]|bodhi)$/.test(m.id) && m.v && typeof m.v === "object") {   // vườn rau chung: ai trong chùa cũng gieo, tưới, thu hoạch được
+      const v = m.v; state.garden[m.id] = { c: v.c == null ? null : Math.max(0, Math.min(3, v.c | 0)), t: +v.t || 0, w: Math.min(Date.now() + 5000, +v.w || 0), n: Math.max(0, Math.min(99999, v.n | 0)) };
+      return changed("garden");
     }
     if (!m || m.t !== "presence" || typeof m.patch !== "object" || !m.patch) return;
     const next = Object.assign({}, c.presence);

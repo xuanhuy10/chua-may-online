@@ -58,6 +58,13 @@ Nhánh `data` không làm Render deploy lại.
 - **Phát cơm**: lấy mâm cơm ở Nhà Trai, mang cho người có biểu tượng bát cơm. Giúp càng nhiều thì chuông chùa càng lớn (5 bậc).
 - **Quét sân**: lá rụng theo mùa, cả chùa quét chung, có phần trăm sân sạch. Quét cùng người khác được gấp đôi công đức.
 - **Mời & nhóm**: trong danh sách người, bấm Mời… để rủ cùng làm; gõ @tên trong chat để gọi. Làm cùng người trong nhóm được thêm 50% công đức.
+- **Việc chùa** (nút trên thanh hành động):
+  - **Vườn rau**: 6 luống chung cho cả chùa. Gieo hạt theo mùa → múc nước ở giếng → tưới (mỗi lần cách nhau ít nhất 1 phút) → 3 lần tưới là chín → thu hoạch → mang rau vào bếp.
+  - **Cây bồ đề**: tưới để cây lớn dần (chung cho cả chùa).
+  - **Nấu ăn tập thể**: 4 việc Rửa rau, Nhóm bếp, Nấu, Bày mâm; tiến độ chung theo từng bữa (mỗi buổi trong game). Nấu xong được thưởng, đông người thưởng nhiều hơn, rồi bưng mâm đi phát.
+  - **Phát cơm**: bưng mâm cho người xin ăn, hoặc chạm vào người chơi khác để mời cơm.
+  - **Tập thể dục**: động tác theo nhịp chung của đồng hồ; bấm nút Nhịp đúng lúc, càng đều và càng đông người càng nhiều công đức.
+  - NPC sư quét sân và cô tưới vườn làm việc quanh chùa.
 - **Bảng vàng**: có xếp hạng tuần này và tổng công đức.
 - Ghi công và giấy phép: xem `LICENSES.md` và trong game ở Âm thanh → Ghi công & bản quyền.
 
