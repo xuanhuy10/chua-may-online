@@ -52,7 +52,16 @@ Render miễn phí xóa ổ đĩa mỗi lần server ngủ dậy. Để không m
 2. Trên Render: service `chua-may-online` → **Environment** → thêm `GITHUB_TOKEN` = token vừa tạo (đã có sẵn `GITHUB_REPO`) → Save. Render tự khởi động lại.
 Nhánh `data` không làm Render deploy lại.
 
-## 7. Các file
+## 7. Đời sống trong chùa (giống nhau ở mọi máy)
+- **Giờ, mùa, thời tiết**: 1 ngày trong game = 20 phút thật; mỗi mùa 3 ngày game (1 giờ thật); thời tiết đổi mỗi buổi. Tính theo đồng hồ nên mọi người thấy như nhau.
+- **Trống, chiêng**: khi có người lạy Phật hoặc thắp hương, hai vị NPC đánh trống chiêng theo nhịp. Người chơi cũng tự đánh được.
+- **Phát cơm**: lấy mâm cơm ở Nhà Trai, mang cho người có biểu tượng bát cơm. Giúp càng nhiều thì chuông chùa càng lớn (5 bậc).
+- **Quét sân**: lá rụng theo mùa, cả chùa quét chung, có phần trăm sân sạch. Quét cùng người khác được gấp đôi công đức.
+- **Mời & nhóm**: trong danh sách người, bấm Mời… để rủ cùng làm; gõ @tên trong chat để gọi. Làm cùng người trong nhóm được thêm 50% công đức.
+- **Bảng vàng**: có xếp hạng tuần này và tổng công đức.
+- Ghi công và giấy phép: xem `LICENSES.md` và trong game ở Âm thanh → Ghi công & bản quyền.
+
+## 8. Các file
 - `server.js` – web server + phòng chơi chung (WebSocket) + lưu bảng vàng vào `data/board.json`.
 - `public/index.html` – game.
 - `public/net.js` – lớp nối game với server.

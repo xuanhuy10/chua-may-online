@@ -28,7 +28,7 @@ try { state = Object.assign(state, JSON.parse(fs.readFileSync(STATE_FILE, "utf8"
 try { const man = JSON.parse(fs.readFileSync(path.join(PUB, "audio", "manifest.json"), "utf8")); for (const [sid, f] of Object.entries(man)) if (f && !(state.audio[sid] && state.audio[sid].id)) state.audio[sid] = Object.assign({}, state.audio[sid], { id: path.basename(f), name: path.basename(f) }); } catch (e) {}
 const SID_RE = /^[a-z0-9_]{1,24}$/, BLOB_RE = /^[a-f0-9]{20}\.[a-z0-9]{1,5}$/;
 const clip = (s, n) => String(s == null ? "" : s).slice(0, n);
-function cleanAudio(v) { const o = {}; if (typeof v.id === "string" && v.id) o.id = clip(path.basename(v.id), 60); if (v.name) o.name = clip(v.name, 60); if (v.lyr) o.lyr = clip(v.lyr, 20000); if (v.t) o.t = clip(v.t, 40); if (v.d) o.d = clip(v.d, 60); return o; }
+function cleanAudio(v) { const o = {}; if (typeof v.id === "string" && v.id) o.id = clip(path.basename(v.id), 60); if (v.name) o.name = clip(v.name, 60); if (v.lyr) o.lyr = clip(v.lyr, 20000); if (v.t) o.t = clip(v.t, 40); if (v.d) o.d = clip(v.d, 60); if (v.src) o.src = clip(v.src, 120); return o; }
 const audioDocs = () => Object.entries(state.audio).map(([id, v]) => ({ id, data: v }));   // mã bài tách riêng (v.id là mã file)
 const boardTop = () => Object.entries(state.board).map(([id, v]) => Object.assign({ id }, v)).sort((a, b) => b.m - a.m).slice(0, 50);
 let saveT = 0, boardSendT = 0;
@@ -120,7 +120,7 @@ wss.on("connection", ws => {
     if (c.budget < 1) return; c.budget -= 1;
     let m; try { m = JSON.parse(raw); } catch (e) { return; }
     if (m && m.t === "board_set" && typeof m.id === "string" && /^[\w-]{3,40}$/.test(m.id) && m.v) {
-      const v = m.v; state.board[m.id] = { n: clip(v.n, 16), m: Math.max(0, Math.min(1e7, +v.m || 0)), lv: Math.max(0, Math.min(20, v.lv | 0)), t: Date.now() };
+      const v = m.v; state.board[m.id] = { n: clip(v.n, 16), m: Math.max(0, Math.min(1e7, +v.m || 0)), lv: Math.max(0, Math.min(20, v.lv | 0)), w: Math.max(0, v.w | 0), wm: Math.max(0, Math.min(1e7, +v.wm || 0)), t: Date.now() };
       return changed("board");
     }
     if (!m || m.t !== "presence" || typeof m.patch !== "object" || !m.patch) return;
