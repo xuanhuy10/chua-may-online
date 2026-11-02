@@ -134,7 +134,7 @@ wss.on("connection", ws => {
       const ks = Object.keys(state.wishes); if (ks.length > 300) ks.sort((a, b) => state.wishes[a].t - state.wishes[b].t).slice(0, ks.length - 300).forEach(k => delete state.wishes[k]);
       return changed("wishes");
     }
-    if (m && m.t === "garden_set" && typeof m.id === "string" && /^(p[0-5]|bodhi)$/.test(m.id) && m.v && typeof m.v === "object") {   // vườn rau chung: ai trong chùa cũng gieo, tưới, thu hoạch được
+    if (m && m.t === "garden_set" && typeof m.id === "string" && /^(p\d{1,2}|bodhi)$/.test(m.id) && m.v && typeof m.v === "object") {   // vườn rau chung: ai trong chùa cũng gieo, tưới, thu hoạch được
       const v = m.v; state.garden[m.id] = { c: v.c == null ? null : Math.max(0, Math.min(3, v.c | 0)), t: +v.t || 0, w: Math.min(Date.now() + 5000, +v.w || 0), n: Math.max(0, Math.min(99999, v.n | 0)) };
       return changed("garden");
     }
