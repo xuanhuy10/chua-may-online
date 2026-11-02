@@ -69,7 +69,16 @@ Nhánh `data` không làm Render deploy lại.
 - **Bảng vàng**: có xếp hạng tuần này và tổng công đức.
 - Ghi công và giấy phép: xem `LICENSES.md` và trong game ở Âm thanh → Ghi công & bản quyền.
 
-## 8. Các file
+## 8. Chơi trên điện thoại (iPhone, Android)
+- Mở link bằng Safari (iPhone) hoặc Chrome (Android). Muốn chơi toàn màn hình như ứng dụng: iPhone bấm **Chia sẻ → Thêm vào MH chính**; Android bấm **⋮ → Thêm vào màn hình chính**.
+- **Cần điều khiển** góc trái dưới: kéo để đi, kéo hết cỡ để chạy. Vẫn chạm vào sàn để đi được.
+- **Nút vàng** góc phải: làm việc ở gần (thắp hương, thỉnh chuông, múc nước, gieo hạt, ngồi ăn…).
+- Nút **bản đồ** để đi nhanh tới Nhà ăn, Nhà bếp, Vườn rau, Cây bồ đề, Tượng Quan Âm, Bảo tháp, Sân tập, Cổng.
+- Nút **⋯**: góc nhìn thứ nhất, ngắm cảnh, bảng vàng, vòng quay, âm thanh, nhân vật.
+- **Góc nhìn thứ nhất**: nhìn bằng mắt nhân vật; kéo màn hình lên/xuống để ngước nhìn tượng Phật.
+- Đồ họa tự giảm độ nét khi máy chậm; có thể chọn trong Âm thanh → Đồ họa: Tự động / Mượt / Đẹp.
+
+## 9. Các file
 - `server.js` – web server + phòng chơi chung (WebSocket) + lưu bảng vàng vào `data/board.json`.
 - `public/index.html` – game.
 - `public/net.js` – lớp nối game với server.
