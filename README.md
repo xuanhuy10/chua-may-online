@@ -65,6 +65,7 @@ Nhánh `data` không làm Render deploy lại.
   - **Phát cơm**: bưng mâm cho người xin ăn, hoặc chạm vào người chơi khác để mời cơm.
   - **Tập thể dục**: động tác theo nhịp chung của đồng hồ; bấm nút Nhịp đúng lúc, càng đều và càng đông người càng nhiều công đức.
   - NPC sư quét sân và cô tưới vườn làm việc quanh chùa.
+  - **Treo lời nguyện**: viết lời nhắn trên tấm thư đỏ và treo lên cây bồ đề (mỗi người một tấm, viết lại thì thay). Chạm vào tấm thư trên cây để đọc. Quản trị gỡ được lời nguyện không phù hợp.
 - **Bảng vàng**: có xếp hạng tuần này và tổng công đức.
 - Ghi công và giấy phép: xem `LICENSES.md` và trong game ở Âm thanh → Ghi công & bản quyền.
 

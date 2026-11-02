@@ -8,7 +8,7 @@
   let adminKey = LSget("chuamay.server.admin") || "";
 
   // ----- dữ liệu chung từ server: bài kinh + bảng vàng (đẩy qua WebSocket) -----
-  const coll = { audio: { docs: [], hs: [] }, board: { docs: [], hs: [] }, garden: { docs: [], hs: [] } };
+  const coll = { audio: { docs: [], hs: [] }, board: { docs: [], hs: [] }, garden: { docs: [], hs: [] }, wishes: { docs: [], hs: [] } };
   function emit(name) { const c = coll[name], snap = { docs: c.docs.map(d => ({ id: d.id, data: () => Object.assign({}, d.data && typeof d.data === "object" ? d.data : d) })) }; c.hs.forEach(h => { try { h(snap); } catch (e) { console.error(e); } }); }
   function setColl(name, docs) { if (!Array.isArray(docs)) return; coll[name].docs = docs.filter(d => d && typeof d.id === "string"); emit(name); }
 
@@ -27,8 +27,9 @@
       if (m.t === "board") setColl("board", m.docs);
       else if (m.t === "audio") setColl("audio", m.docs);
       else if (m.t === "garden") setColl("garden", m.docs);
+      else if (m.t === "wishes") setColl("wishes", m.docs);
       else if (m.t === "hello") {
-        setColl("board", m.board); setColl("audio", m.audio); setColl("garden", m.garden);
+        setColl("board", m.board); setColl("audio", m.audio); setColl("garden", m.garden); setColl("wishes", m.wishes);
         const left = [...peers.values()]; peers.clear(); const joined = (m.peers || []).map(p => { const o = mk(p.peer, p.presence); peers.set(p.peer, o); return o; }); emitPeers(joined, firstHello ? [] : left, []); firstHello = false;
       }
       else if (m.t === "peer") { const had = peers.has(m.peer), o = mk(m.peer, m.presence); peers.set(m.peer, o); emitPeers(had ? [] : [o], [], had ? [o] : []); }
@@ -76,11 +77,12 @@
       return { onSnapshot(cb) { const c = coll[name]; if (!c) return () => {}; c.hs.push(cb); if (c.docs.length) Promise.resolve().then(() => emit(name)); return () => { const i = c.hs.indexOf(cb); if (i >= 0) c.hs.splice(i, 1); }; } };
     },
     doc(p) {
-      const m = /^(audio|board|garden)\/([\w-]{1,40})$/.exec(String(p));
+      const m = /^(audio|board|garden|wishes)\/([\w-]{1,40})$/.exec(String(p));
       return {
         set(v) {
           if (!m) return Promise.reject({ code: "not_granted" });
           if (m[1] === "board") { raw({ t: "board_set", id: m[2], v }); return Promise.resolve(); }
+          if (m[1] === "wishes") { raw({ t: "wish_set", id: m[2], v }); return Promise.resolve(); }
           if (m[1] === "garden") { raw({ t: "garden_set", id: m[2], v }); setColl("garden", coll.garden.docs.filter(d => d.id !== m[2]).concat([{ id: m[2], data: v }])); return Promise.resolve(); }
           return adminFetch("/api/audio/" + m[2], { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(v || {}) }).then(() => {});
         },

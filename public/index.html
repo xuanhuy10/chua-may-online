@@ -15,6 +15,10 @@
 }
 html,body{height:100%}
 [hidden]{display:none!important}
+.wishbox{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,5,4,.55);padding:16px}
+.wcard{width:min(260px,100%);background:linear-gradient(#b8221c,#8a160f);border:3px solid #e3b04b;border-radius:6px;padding:16px 18px 20px;color:#fbe9c2;text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.wcard .wtop{font-family:var(--font-display);font-size:26px;color:#f2c94c}.wcard b{display:block;margin:6px 0;color:#ffe6a8}.wcard p{font-family:var(--font-display);font-size:17px;line-height:1.5;margin:0 0 8px;overflow-wrap:anywhere}.wcard small{color:#f0c89a;font-size:11.5px}
+.wishta{width:100%;background:rgba(0,0,0,.3);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;resize:vertical}
 .picker{max-height:calc(100% - 240px);overflow-y:auto}
 .picker .k{position:relative}.pbar{display:block;height:4px;border-radius:2px;margin-top:4px;background:linear-gradient(90deg,var(--gold) var(--p),rgba(255,255,255,.12) var(--p))}
 .act.beat{min-width:130px;position:relative;overflow:hidden}.act.beat b{font-size:15px;color:var(--gold-2);position:relative}.act.beat span{font-size:10.5px;position:relative}
@@ -165,6 +169,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
     </div>
   </div>
   <div class="wheelwrap" id="wheelBox" hidden><div class="wheelcard"><header><h2>Vòng quay may mắn</h2><button class="x" id="wheelX" aria-label="Đóng">×</button></header><canvas id="wheel" width="260" height="260" aria-label="Vòng quay"></canvas><p class="note" id="wheelResult"></p><button class="enter" id="spinBtn" type="button">Quay</button></div></div>
+  <div class="wishbox" id="wishBox" hidden role="dialog" aria-labelledby="wishName"><div class="wcard"><div class="wtop">願</div><b id="wishName"></b><p id="wishText"></p><small id="wishTime"></small></div><button type="button" class="sm" id="wishX">Đóng</button></div>
   <div class="invbox" id="invBox" hidden role="alertdialog" aria-labelledby="invTx"><div id="invTx"></div><div class="btns"><button type="button" class="sm pri" id="invYes">Đồng ý</button><button type="button" class="sm" id="invNo">Từ chối</button></div></div>
   <section class="sheet" id="sheet" hidden><header><h2 id="sheetTitle"></h2><button class="x" id="sheetX" aria-label="Đóng">×</button></header><div class="body" id="sheetBody"></div></section>
   <div class="gate" id="gate">
@@ -382,7 +387,7 @@ const HALL = { y1: 780, doorX0: 600, doorX1: 800 };
 const WALL = 330, CEIL = 700;   // tường hậu ở y = 330; trần cao 700 đơn vị
 const STEPS = { y0: WALL, y1: 400, n: 5, rise: 15, x0: 150, x1: 1250 };   // 5 bậc thang lên bệ thờ
 const URN = { x: 700, y: 432 }, BELL = { x: 230, y: 1080 }, GATE = { x: 700, y: 1484 };
-const TREES = [[1300, 1440], [420, 1190]];   // [0] cây bồ đề (lớn dần khi được tưới), [1] cây đào
+const TREES = [[1100, 1170], [420, 1190]];   // [0] cây bồ đề (lớn dần khi được tưới), [1] cây đào
 // thảm đỏ rộng trước bậc thang: chỗ lạy Phật (người chơi chọn ô trống gần nhất)
 const RUG = { x0: 470, x1: 930, y0: 404, y1: 560 };
 const LAY_SLOTS = [[636, 494], [764, 494], [610, 544], [670, 548], [730, 548], [790, 544]];
@@ -706,7 +711,7 @@ function drawHead(g, ap, R, hx, hy, skin, back, side, bowK) {
 function hat(g, hx, hy, r) { g.fillStyle = "#e2cf96"; g.beginPath(); g.moveTo(hx - r - 16, hy - r * .55); g.lineTo(hx, hy - r - 18); g.lineTo(hx + r + 16, hy - r * .55); g.quadraticCurveTo(hx, hy - r * .3, hx - r - 16, hy - r * .55); g.fill(); g.strokeStyle = "rgba(140,110,60,.45)"; g.lineWidth = .8; for (let i = 1; i < 4; i++) { const yy = hy - r * .55 - (r * .45 + 18) * (1 - i / 4) + 2; g.beginPath(); g.moveTo(hx - (r + 16) * i / 4, yy); g.lineTo(hx + (r + 16) * i / 4, yy); g.stroke(); } }
 
 /* ===================== MODULE: hoạt ảnh theo dòng thời gian ===================== */
-const SEQ = { idle: 0, walk: 0, pray: 2.2, greet: 1.6, lay: 10, take: 1.2, give: 1.6, strike: .9, sweep: 0, water: 1.6, plant: 1.8, draw: 1.4, exercise: 0, wash: 0, fire: 0, cook: 0, setm: 0, incense: 4.4, sitdown: 1.8, chant: 0, meditate: 0, endchant: 2.6, standup: 1.4, wave: 2, bell: 2 };
+const SEQ = { idle: 0, walk: 0, pray: 2.2, greet: 1.6, lay: 10, take: 1.2, give: 1.6, strike: .9, sweep: 0, water: 1.6, plant: 1.8, draw: 1.4, hang: 1.8, exercise: 0, wash: 0, fire: 0, cook: 0, setm: 0, incense: 4.4, sitdown: 1.8, chant: 0, meditate: 0, endchant: 2.6, standup: 1.4, wave: 2, bell: 2 };
 function poseAt(st, e, rig, ph) {
   const P = { sit: 0, bow: 0, hands: "side", handK: 0, head: 0, sway: 0, mouth: 0, eyes: 0, mallet: 0 };
   switch (st) {
@@ -732,6 +737,7 @@ function poseAt(st, e, rig, ph) {
     case "meditate": P.sit = 1; P.hands = "lap"; P.handK = 1; P.head = .35; P.eyes = 1; P.sway = Math.sin(e * .5) * .008; break;
     case "endchant": P.sit = 1; P.hands = "pray"; P.handK = ease(seg(e, 0, .6)); P.eyes = .8; P.bow = Math.sin(Math.PI * seg(e, .7, 2.4)); break;
     case "standup": P.hands = "pray"; P.handK = 1 - ease(seg(e, .8, 1.4)); P.sit = 1 - (.45 * ease(seg(e, 0, .6)) + .55 * ease(seg(e, .6, 1.3))); break;
+    case "hang": P.hands = "up"; P.handK = ease(seg(e, 0, .4)) * (1 - ease(seg(e, 1.4, 1.8))); P.head = -.3; break;
     case "water": P.hands = "can"; P.handK = ease(seg(e, 0, .3)); P.bow = .2; break;
     case "plant": P.hands = "ground"; P.handK = ease(seg(e, 0, .3)) * (1 - ease(seg(e, 1.5, 1.8))); P.bow = .6 * Math.sin(Math.PI * seg(e, 0, 1.8)); P.sit = .3 * Math.sin(Math.PI * seg(e, 0, 1.8)); break;
     case "draw": P.hands = "pull"; P.handK = 1; P.bow = .15; break;
@@ -1232,6 +1238,7 @@ function toggleWork(show) {
   item(me.carry === "food" ? "Phát cơm" : "Lấy mâm cơm", me.carry === "food" ? "Mang cho người xin ăn hoặc chạm vào người chơi khác" : "Ở Nhà Trai, rồi mang cho người xin ăn", me.carry === "food" ? ACT.feed : ACT.kitchen);
   item("Vườn rau", ripe ? ripe + " luống đã chín, thu hoạch!" : thirsty ? thirsty + " luống cần tưới (múc nước ở giếng)" : empty + " luống trống, gieo hạt " + CROPS[WX.season].n.toLowerCase(), gardenNext);
   item("Tưới cây bồ đề", "Cây đã được tưới " + ((GARDEN.bodhi && GARDEN.bodhi.n) || 0) + " lần", () => me.carry === "water" ? bodhiAction() : wellAction());
+  item("Treo lời nguyện", "Tấm thư đỏ trên cây bồ đề · " + WISHES.length + " lời nhắn", openWish);
   item("Tập thể dục", "Động tác theo nhịp chung, bấm đúng nhịp", startExercise);
   item("Đánh trống / chiêng", "Trong chánh điện, hai bên bàn thờ", ACT.drum);
   const c = document.createElement("button"); c.type = "button"; c.className = "sm"; c.textContent = "Đóng"; c.addEventListener("click", () => toggleWork(false)); p.append(c);
@@ -1249,6 +1256,59 @@ function gardenNext() {
   if (me.carry === "water") return th ? plotAction(th) : bodhiAction();
   const em = PLOTS.find(pl => plotStage(GARDEN[pl.id]) < 0); if (em && !me.carry) return plotAction(em);
   if (th) return wellAction(); toast("Vườn đang ổn, quay lại sau nhé");
+}
+
+/* ===================== MODULE: lời nguyện treo trên cây bồ đề =====================
+   Mỗi người treo một tấm thư đỏ (viết lại thì thay tấm cũ). Lưu chung trong db "wishes/<mã người>",
+   ai vào chùa cũng thấy các tấm thư đung đưa trên cây và chạm vào để đọc. */
+let WISHES = [];
+const WISH_HITS = [];
+const WISH_SLOTS = Array.from({ length: 40 }, (_, i) => { const a = (i * 2.399) % (Math.PI * 2), r = 30 + (i * 37 % 85); return [Math.cos(a) * r * 1.15, -150 - Math.abs(Math.sin(a)) * 70 - (i % 3) * 18]; });
+function applyWishes(docs) {
+  WISHES = docs.map(([id, v]) => ({ id, n: clip(v && v.n, 16), s: clip(v && v.s, 140), t: +(v && v.t) || 0 })).filter(w => w.s).sort((a, b) => b.t - a.t).slice(0, 200);
+  if (!$("picker").hidden && $("picker").dataset.mode === "wish") openWish();
+  if (sheetMode === "admin") renderSheet();
+}
+function drawWishCards(g, x, y, t) {   // vẽ trong hệ toạ độ của cây (đã co giãn theo cây)
+  WISHES.slice(0, WISH_SLOTS.length).forEach((w, i) => {
+    const [dx, dy] = WISH_SLOTS[i], sw = Math.sin(t * 1.6 + i * 1.3) * (.12 + WX.rain * .15), cx = x + dx, cy = y + dy;
+    g.save(); g.translate(cx, cy); g.rotate(sw); g.scale(1.45, 1.45);
+    g.strokeStyle = "rgba(240,210,150,.8)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, -14); g.lineTo(0, 0); g.stroke();
+    g.fillStyle = w.id === myKey ? "#d4433a" : "#b8221c"; g.fillRect(-6, 0, 12, 20); g.strokeStyle = "#e3b04b"; g.lineWidth = 1.2; g.strokeRect(-5, 1, 10, 18);
+    g.fillStyle = "#f4dba0"; g.fillRect(-2, 5, 4, 1.2); g.fillRect(-2, 9, 4, 1.2); g.fillRect(-2, 13, 4, 1.2);
+    g.fillStyle = "#e3b04b"; g.fillRect(-1, 20, 2, 5);
+    g.restore();
+  });
+}
+function recordWishHits(p, k) {   // vị trí trên màn hình để chạm vào đọc
+  WISH_HITS.length = 0; WISHES.slice(0, WISH_SLOTS.length).forEach((w, i) => { const [dx, dy] = WISH_SLOTS[i]; WISH_HITS.push({ x: p.x + dx * k * p.s, y: p.y + (dy + 10) * k * p.s, r: Math.max(12, 12 * k * p.s), w }); });
+}
+function showWish(w) {
+  const b = $("wishBox"); $("wishName").textContent = (w.id === myKey ? "Lời nguyện của bạn" : w.n || "Một người"); $("wishText").textContent = w.s;
+  $("wishTime").textContent = w.t ? new Date(w.t).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }) : ""; b.hidden = false;
+}
+function openWish() {
+  const p = $("picker"); p.hidden = false; p.dataset.mode = "wish"; p.textContent = "";
+  const h = document.createElement("div"); h.className = "sec"; h.textContent = "Treo lời nguyện lên cây bồ đề"; p.append(h);
+  const mine = WISHES.find(w => w.id === myKey);
+  const ta = document.createElement("textarea"); ta.id = "wishIn"; ta.maxLength = 140; ta.rows = 3; ta.placeholder = "Viết lời nhắn, lời nguyện cầu bình an… (tối đa 140 chữ)"; ta.value = mine ? mine.s : ""; ta.className = "wishta"; p.append(ta);
+  const ok = document.createElement("button"); ok.type = "button"; ok.className = "sm pri"; ok.textContent = mine ? "Thay tấm thư của tôi" : "Treo lên cây"; ok.addEventListener("click", () => { const s = clip(ta.value.trim(), 140); if (!s) return ta.focus(); p.hidden = true; hangWish(s); }); p.append(ok);
+  if (!db) { const n = document.createElement("p"); n.className = "note"; n.textContent = "Máy này chưa vào được phòng chung nên lời nguyện chỉ hiện trên máy bạn."; p.append(n); }
+  if (WISHES.length) { const h2 = document.createElement("div"); h2.className = "sec"; h2.textContent = "Lời nguyện trên cây (" + WISHES.length + ")"; p.append(h2); }
+  WISHES.slice(0, 30).forEach(w => { const b = document.createElement("button"); b.type = "button"; b.className = "k"; const tt = document.createElement("b"); tt.textContent = w.id === myKey ? "Bạn" : w.n || "Một người"; const dd = document.createElement("span"); dd.textContent = w.s; b.append(tt, dd); b.addEventListener("click", () => showWish(w)); p.append(b); });
+  const c = document.createElement("button"); c.type = "button"; c.className = "sm"; c.textContent = "Đóng"; c.addEventListener("click", () => { p.hidden = true; }); p.append(c);
+}
+function hangWish(s) {
+  if (busy()) return toast("Đứng dậy trước rồi hãy treo lời nguyện");
+  const [bx, by] = TREES[0], tx = bx - 60, ty = by + 40;
+  const go = () => { faceToward(bx, by - 60); me.dir = "up"; setState("hang"); me.after2 = () => {
+    const v = { n: prof.name, s, t: Date.now() };
+    WISHES = [{ id: myKey, n: prof.name, s, t: v.t }].concat(WISHES.filter(w => w.id !== myKey));
+    if (db) db.doc("wishes/" + myKey).set(v).catch(() => toast("Chưa lưu được lời nguyện (bạn cần quyền tham gia)"));
+    if (LS.get("wishDay", -1) !== WX.dayN) { LS.set("wishDay", WX.dayN); addMerit(3); }
+    celebrate(bx, by); toast("Đã treo lời nguyện lên cây bồ đề. Ai vào chùa cũng đọc được.");
+  }; };
+  if (Math.hypot(me.x - tx, me.y - ty) > 14) goTo(tx, ty, go); else go();
 }
 
 /* ===================== MODULE: vật phẩm + vòng quay may mắn + bảng vàng ===================== */
@@ -1405,7 +1465,7 @@ function sitOnMat(kind) {
 function startChant(sid) { me.sutra = sid; LS.set("sutra", sid); togglePicker(false); sitOnMat("chant"); }
 function endChant() { if (me.st !== "chant" && me.st !== "meditate") return; if (me.voice) { me.voice.stop(); me.voice = null; } bowlBell(.8); $("sutraBar").hidden = true; sendPresence({ su: null }); setState("endchant"); }
 function finishSeq(st) {
-  if (me.after2 && (st === "water" || st === "plant" || st === "draw")) { const f = me.after2; me.after2 = null; setState("idle"); f(); return; }
+  if (me.after2 && (st === "water" || st === "plant" || st === "draw" || st === "hang")) { const f = me.after2; me.after2 = null; setState("idle"); f(); return; }
   if (st === "lay") { addMerit(Math.round(6 * groupBoost("lay"))); setState("idle"); }
   else if (st === "take") { me.carry = "food"; sendPresence({ cr: "food" }); toast("Bạn đã bưng mâm cơm. Mang đến người có biểu tượng bát cơm ngoài sân (bấm Cho ăn)."); setState("idle"); }
   else if (st === "incense") { smokeBoost = .8; addMerit(5); emitEv("incense"); toast("Bạn đã dâng ba nén hương"); setState("idle"); }
@@ -1470,6 +1530,7 @@ async function connect() {
   renderOnline();
   db = await use("db"); assets = await use("assets");
   if (db) { db.collection("board").onSnapshot(snap => { boardDocs = snap.docs.map(d => Object.assign({ id: d.id }, d.data() || {})); if (sheetMode === "board") renderSheet(); }, () => {}); boardPush(true); }
+  if (db) db.collection("wishes").onSnapshot(snap => applyWishes(snap.docs.map(d => [d.id, d.data() || {}])), () => {});
   if (db) db.collection("garden").onSnapshot(snap => applyGarden(snap.docs.map(d => [d.id, d.data() || {}])), () => {});
   if (db) db.collection("audio").onSnapshot(snap => applyAudioDocs(snap.docs.map(d => [d.id, d.data() || {}])), () => {});
   $("btnAdmin").hidden = !canEdit;
@@ -1576,6 +1637,9 @@ function renderAdmin(b, sec, note) {
   const de = document.createElement("input"); de.placeholder = "Mô tả ngắn (không bắt buộc)"; de.maxLength = 60; de.id = "newSutraDesc";
   const ok = document.createElement("button"); ok.className = "sm pri"; ok.type = "submit"; ok.textContent = "Thêm bài";
   f.append(ti, de, ok); f.addEventListener("submit", async e => { e.preventDefault(); const n = clip(ti.value.trim(), 40); if (!n) return; const sid = "c" + Date.now().toString(36); if (await saveAudio(sid, { t: n, d: clip(de.value.trim(), 60) || null, lyr: n })) { toast("Đã thêm bài " + n + ". Giờ tải file và dán lời kinh."); adminSid = sid; openSheet("lyr"); } }); b.append(f);
+  sec("Lời nguyện trên cây bồ đề");
+  if (!WISHES.length) note("Chưa có lời nguyện nào.");
+  WISHES.slice(0, 60).forEach(w => { const row = document.createElement("div"); row.className = "arow"; const n = document.createElement("span"); n.textContent = (w.n || "Một người") + ": " + w.s; const x = document.createElement("button"); x.type = "button"; x.className = "sm"; x.textContent = "Gỡ"; x.addEventListener("click", () => db.doc("wishes/" + w.id).delete().then(() => toast("Đã gỡ lời nguyện")).catch(() => toast("Không gỡ được"))); row.append(n, x); b.append(row); });
   sec("Bảng vàng công đức");
   const rows = boardDocs.slice().sort((a, c) => (+c.m || 0) - (+a.m || 0));
   if (!rows.length) note("Chưa có ai trên bảng vàng.");
@@ -1654,6 +1718,7 @@ function renderSutraLine(k) {
 }
 let sheetMode = null, unread = 0; const chatLog = [];
 function openSheet(m) { sheetMode = m; $("sheet").hidden = false; renderSheet(); }
+$("wishX").addEventListener("click", () => { $("wishBox").hidden = true; }); $("wishBox").addEventListener("click", e => { if (e.target.id === "wishBox") $("wishBox").hidden = true; });
 $("invYes").addEventListener("click", () => answerInvite(true)); $("invNo").addEventListener("click", () => answerInvite(false));
 function closeSheet() { sheetMode = null; $("sheet").hidden = true; syncStop(); }
 $("btnAdmin").addEventListener("click", () => { audio(); loadPendingTracks(); sheetMode === "admin" || sheetMode === "lyr" ? closeSheet() : openSheet("admin"); });
@@ -1668,7 +1733,7 @@ $("btnPeople").addEventListener("click", () => sheetMode === "people" ? closeShe
 $("btnSound").addEventListener("click", () => { audio(); loadPendingTracks(); sheetMode === "sound" ? closeSheet() : openSheet("sound"); });
 $("btnChat").addEventListener("click", () => sheetMode === "chat" ? closeSheet() : openSheet("chat"));
 function pushChat(m) { chatLog.push(m); if (chatLog.length > 120) chatLog.shift(); if (sheetMode === "chat") renderSheet(); else { unread++; $("chatBadge").hidden = false; $("chatBadge").textContent = unread > 9 ? "9+" : unread; } }
-function stLabel(st, su) { const W2 = { sweep: "Đang quét sân", exercise: "Đang tập thể dục", wash: "Đang rửa rau", fire: "Đang nhóm bếp", cook: "Đang nấu ăn", setm: "Đang bày mâm", water: "Đang tưới cây", plant: "Đang làm vườn", draw: "Đang múc nước", give: "Đang trao cơm", take: "Đang lấy cơm", strike: "Đang đánh trống chiêng" }; if (W2[st]) return W2[st]; return st === "chant" ? "Đang tụng " + ((SUTRAS[su] || {}).n || "kinh") : st === "meditate" ? "Đang ngồi thiền" : st === "lay" ? "Đang lạy Phật" : st === "incense" ? "Đang thắp hương" : st === "walk" ? "Đang đi" : st === "sitdown" ? "Đang ngồi xuống" : st === "standup" || st === "endchant" ? "Đang xả" : "Đang đứng"; }
+function stLabel(st, su) { const W2 = { hang: "Đang treo lời nguyện", sweep: "Đang quét sân", exercise: "Đang tập thể dục", wash: "Đang rửa rau", fire: "Đang nhóm bếp", cook: "Đang nấu ăn", setm: "Đang bày mâm", water: "Đang tưới cây", plant: "Đang làm vườn", draw: "Đang múc nước", give: "Đang trao cơm", take: "Đang lấy cơm", strike: "Đang đánh trống chiêng" }; if (W2[st]) return W2[st]; return st === "chant" ? "Đang tụng " + ((SUTRAS[su] || {}).n || "kinh") : st === "meditate" ? "Đang ngồi thiền" : st === "lay" ? "Đang lạy Phật" : st === "incense" ? "Đang thắp hương" : st === "walk" ? "Đang đi" : st === "sitdown" ? "Đang ngồi xuống" : st === "standup" || st === "endchant" ? "Đang xả" : "Đang đứng"; }
 function renderSheet() {
   const b = $("sheetBody"); b.textContent = "";
   const sec = t => { const d = document.createElement("div"); d.className = "sec"; d.textContent = t; b.append(d); };
@@ -1757,6 +1822,8 @@ cv.addEventListener("pointerdown", e => {
   if (["sweep", "exercise", "wash", "fire", "cook", "setm"].includes(me.st)) { setState("idle"); me.role = null; }
   if (busy()) return;
   for (const bg2 of BEGGARS) if ((bg2.mode === "wander" || bg2.mode === "wait") && Math.hypot(x - bg2.x, y - bg2.y) < 50) { if (me.carry === "food") return giveFood(bg2); return toast("Người này đang đói. Lấy mâm cơm ở Nhà Trai rồi mang đến nhé."); }
+  { const sx = e.clientX - r.left, sy = e.clientY - r.top; for (const h of WISH_HITS) if (Math.hypot(sx - h.x, sy - h.y) < h.r) return showWish(h.w); }
+  if (Math.hypot(x - TREES[0][0], y - TREES[0][1]) < 90 && me.carry !== "water") return openWish();
   if (me.carry === "food") for (const pp of peers.values()) if (Math.hypot(x - pp.x, y - pp.y) < 40) return giveToPlayer(pp);
   if (Math.hypot(x - WELL.x, y - WELL.y) < 60) return me.carry === "water" ? toast("Bạn đã có nước, chạm vào luống rau hoặc cây bồ đề để tưới") : wellAction();
   for (const pl of PLOTS) if (Math.abs(x - pl.x) < 46 && Math.abs(y - pl.y) < 34) return me.carry === "veg" ? bringVeg() : plotAction(pl);
@@ -1969,7 +2036,8 @@ function render(ts, t) {
   PLOTS.forEach(pl => add(pl.y - 30, () => drawPlot(pl, ts)));
   add(WELL.y, () => { upright(WELL.x, WELL.y); drawWell(g); });
   BEGGARS.forEach(b => { if (b.mode !== "gone") add(b.y, () => { const p = upright(b.x, b.y); drawChar(g, b, ts); tags.push([p, b.ap, null, 0, b.bubble, false, b.mode === "wander" || b.mode === "wait"]); }); });
-  TREES.forEach(([x, y], i) => add(y, () => { upright(x, y); { const k = i === 0 ? bodhiScale() : .72; g.translate(x, y); g.scale(k, k); g.translate(-x, -y); } drawTree(g, ts, x, y, i); }));
+  WISH_HITS.length = 0;
+  TREES.forEach(([x, y], i) => add(y, () => { const p = upright(x, y), k = i === 0 ? bodhiScale() : .72; g.translate(x, y); g.scale(k, k); g.translate(-x, -y); drawTree(g, ts, x, y, i); if (i === 0) { drawWishCards(g, x, y, ts); recordWishHits(p, k); } }));
   LANTERNS.forEach(([x, y]) => add(y, () => { upright(x, y); drawLantern(g, x, y); }));
   add(GATE.y, () => { g.globalAlpha *= clamp((CAM.ycam - GATE.y - 230) / 220, 0, 1); if (g.globalAlpha > .02) { upright(GATE.x, GATE.y); drawGate(g); } });   // cổng mờ dần khi ở sát camera
   if (!inside) add(HALL.y1, () => drawFrontFacade(), true);
