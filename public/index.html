@@ -19,7 +19,7 @@ html,body{height:100%}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.pgrid .sm{padding:9px 8px;font-size:13px}
 .guide h3{margin:6px 0 2px;font-size:14px;color:var(--gold-2)}.guide p,.guide li{font-size:13px;line-height:1.55;color:var(--ink);margin:0}.guide ul{margin:0;padding-left:18px}
 .joy{position:absolute;left:max(18px,env(safe-area-inset-left,0px));bottom:calc(150px + env(safe-area-inset-bottom,0px));width:124px;height:124px;border-radius:50%;background:radial-gradient(circle,rgba(26,19,15,.25) 40%,rgba(26,19,15,.62));border:1.5px solid var(--line);display:none;touch-action:none}
-body.touch .joy{display:block}
+body.touch .joy,body.fp .joy{display:block}
 .joy i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6dc94,#c48a2c);box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform .12s}
 .joy.on i{transition:none}.joy.on{border-color:var(--gold)}
 .use{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(158px + env(safe-area-inset-bottom,0px));width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6d482,#b8781e);color:#2a1808;border:2px solid #fbe3a0;font-weight:700;font-size:13px;line-height:1.2;display:grid;place-items:center;text-align:center;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,.5);touch-action:manipulation}
@@ -779,6 +779,7 @@ function drawMinimap(cv2) {
   m.fillStyle = "#5a1f0e"; m.fillRect(X(HX0), Y(0), (HX1 - HX0) * sx, HALL.y1 * sy); m.fillStyle = "#f4dba0"; m.font = "600 10px 'Be Vietnam Pro', sans-serif"; m.textAlign = "center"; m.fillText("Chánh điện", X(700), Y(400));
   PAVS.forEach(p2 => { m.fillStyle = "rgba(107,42,29,.9)"; m.fillRect(X(p2.x0), Y(p2.y0), (p2.x1 - p2.x0) * sx, (p2.y1 - p2.y0) * sy); m.fillStyle = "#f4dba0"; m.fillText(p2.k === "dining" ? "Nhà ăn" : "Bếp", X((p2.x0 + p2.x1) / 2), Y((p2.y0 + p2.y1) / 2) + 3); });
   [["Vườn", -650, 1530], ["Lễ hội", -410, 2100], ["Kinh các", 1830, 2070], ["Sông", 700, 2620], ["Bồ đề", TREES[0][0], TREES[0][1]], ["Quan Âm", QUANAM.x, QUANAM.y + 140], ["Tháp", STUPA.x, STUPA.y], ["Sân tập", 1760, 1560], ["Cổng", 700, 2300]].forEach(([t, x, y]) => { m.fillStyle = "#f4dba0"; m.fillText(t, X(x), Y(y)); });
+  drawLionMini(m, X, Y);
   peers.forEach(pp => { m.fillStyle = "#9fe0b4"; m.beginPath(); m.arc(X(pp.x), Y(pp.y), 3, 0, 7); m.fill(); });
   m.fillStyle = "#ffe08a"; m.strokeStyle = "#2a1a0d"; m.lineWidth = 2; m.beginPath(); m.arc(X(me.x), Y(me.y), 5, 0, 7); m.fill(); m.stroke();
 }
@@ -1002,6 +1003,7 @@ function drawChar(g, c, t) {
   }
   if (ap.acc === 1 && !back) { g.fillStyle = "#5a3418"; for (let i = 0; i <= 12; i++) { const a = Math.PI * .1 + i / 12 * Math.PI * .8; g.beginPath(); g.arc(Math.cos(a) * 9, shoulderY + 2 + Math.sin(a) * 13, 1.6, 0, 7); g.fill(); } g.fillStyle = "#a8322a"; g.beginPath(); g.arc(0, shoulderY + 16, 2.2, 0, 7); g.fill(); }
   if (EQ.robe === "goldrobe" && !back) { g.fillStyle = "rgba(255,236,170,.55)"; for (let yy = shoulderY + 8; yy < robeBottom - 2; yy += 7) for (let xx = -wBot + 6 + ((yy | 0) % 2) * 3; xx < wBot - 4; xx += 7) { if (Math.abs(xx) < wTop + (yy - shoulderY) * .25) { g.beginPath(); g.arc(xx, yy, .9, 0, 7); g.fill(); } } }
+  if (EQ.neck === "jade" && !back) { for (let i = 0; i <= 14; i++) { const a = Math.PI * .1 + i / 14 * Math.PI * .8; g.fillStyle = i % 3 === 0 ? "#e3b04b" : "#4e9a7a"; g.beginPath(); g.arc(Math.cos(a) * 11, shoulderY + 1 + Math.sin(a) * 20, i % 3 === 0 ? 1.6 : 2.3, 0, 7); g.fill(); } g.fillStyle = "#3f8a6a"; g.beginPath(); g.ellipse(0, shoulderY + 24, 3.5, 4.5, 0, 0, 7); g.fill(); g.fillStyle = "rgba(255,255,255,.6)"; g.beginPath(); g.arc(-1, shoulderY + 22.5, 1.1, 0, 7); g.fill(); }
   if (EQ.neck === "mala" && !back) { g.fillStyle = "#7a4a22"; for (let i = 0; i <= 18; i++) { const a = Math.PI * .08 + i / 18 * Math.PI * .84; g.beginPath(); g.arc(Math.cos(a) * 11, shoulderY + 1 + Math.sin(a) * 22, 1.8, 0, 7); g.fill(); } g.fillStyle = "#e3b04b"; g.beginPath(); g.arc(0, shoulderY + 24, 2.6, 0, 7); g.fill(); }
   if (EQ.aura) drawAura(g, shoulderY - 18 + R.bow * 30);
   R.gy = -hipY; drawArms(g, c, R, shoulderY, wTop, cloth, skin, back, side, t);
@@ -1063,6 +1065,7 @@ function drawHead(g, ap, R, hx, hy, skin, back, side, bowK) {
   }
   if (hs === 2 || hs === 4) { g.fillStyle = hairCol; g.beginPath(); g.arc(hx, hy - r - 2, 8, 0, 7); g.fill(); }
   if (eqParse(ap.eq).head === "crown" && ap.acc !== 3) drawCrown(g, hx, hy, r);
+  if (eqParse(ap.eq).head === "lionhat" && ap.acc !== 3) drawLionHat(g, hx, hy, r, back);
   if (back) { if (ap.acc === 3) hat(g, hx, hy, r); return; }
   const fx = hx + side * 6, fy = hy + 3 + bowK * 2, closed = R.eyesClosed > .5 || R.blinkT > 0;
   g.lineCap = "round";
@@ -1245,7 +1248,7 @@ function updateClock(dt) {
   WX.light = clamp((hour - 5) / 2, 0, 1) * clamp((19 - hour) / 2, 0, 1); WX.warm = Math.max(clamp(1 - Math.abs(hour - 18) / 1.3, 0, 1), clamp(1 - Math.abs(hour - 6) / 1.2, 0, 1));
   if (WX.season !== season && WX.dayN) toast("Đã sang mùa " + SEASON_N[season].toLowerCase());
   WX.dayN = dayN; WX.hour = hour; WX.season = season; WX.weather = WX.rain > .5 ? "rain" : WX.cloud > .55 ? "cloudy" : "clear";
-  const txt = SEASON_N[season] + " · " + String(Math.floor(hour)).padStart(2, "0") + ":" + String(Math.floor((hour % 1) * 60 / 10) * 10).padStart(2, "0") + " · " + (WX.weather === "rain" ? "Mưa" : WX.weather === "cloudy" ? "Nhiều mây" : WX.light < .2 ? "Trời đêm" : WX.fog > .45 ? "Sương sớm" : "Trời quang");
+  const txt = SEASON_N[season] + " · " + String(Math.floor(hour)).padStart(2, "0") + ":" + String(Math.floor((hour % 1) * 60 / 10) * 10).padStart(2, "0") + " · " + (WX.weather === "rain" ? "Mưa" : WX.weather === "cloudy" ? "Nhiều mây" : WX.light < .2 ? "Trời đêm" : WX.fog > .45 ? "Sương sớm" : "Trời quang") + (lionNow.on ? " · Đoàn lân" : isFestDay(dayN) ? " · Ngày lễ" : "");
   const el = $("clockPill"); if (el && el.textContent !== txt) el.textContent = txt;
 }
 const mixHex = (a, b, k) => { const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16); const ch = s => Math.round(lerp((pa >> s) & 255, (pb >> s) & 255, k)); return "rgb(" + ch(16) + "," + ch(8) + "," + ch(0) + ")"; };
@@ -1784,6 +1787,358 @@ function updateKWorkers(dt) {
     animateRig(w.rig, w.st, (pnow() - w.st0) / 1000, dt, w.mv, null);
   });
 }
+/* ===================== MODULE: đoàn lân ngày lễ =====================
+   Lịch theo đồng hồ chung: mỗi ngày trong game lúc 19:00, ngày lễ (cứ 4 ngày một lần) thêm 9:00 sáng.
+   Mọi máy tính cùng tính một vị trí cho đoàn (từ thời gian chung) nên ai cũng thấy cùng một cảnh.
+   Đoàn: 2 người cầm cờ ngũ sắc, Ông Địa, 2 con lân, xe trống, chập chõa, thanh la.
+   Lộ trình: vào cổng tam quan → múa chào trước chánh điện (3 lạy) → sang Sân lễ hội múa, hái lộc → ra cổng.
+   Người chơi tham gia: múa lân (thêm con lân của mình), đánh trống, chập chõa, đi theo cổ vũ; bấm nhịp để được công đức. */
+const LION_DUR = 170, LSTEP = .2, LBEAT = .4;
+const isFestDay = d => ((d % 4) + 4) % 4 === 0;
+const lionHours = d => isFestDay(d) ? [9, 19] : [19];
+function lionAt(now) {
+  now = now == null ? Date.now() + clockOffset : now; const dayN = Math.floor(now / DAY_MS);
+  for (const d of [dayN, dayN - 1]) for (const hr of lionHours(d)) { const st = d * DAY_MS + hr / 24 * DAY_MS, t = (now - st) / 1000; if (t >= 0 && t < LION_DUR) return { on: true, t, id: d * 100 + hr }; }
+  return { on: false, t: 0, id: 0 };
+}
+function lionNextIn() {   // số giây tới lượt đoàn lân kế tiếp
+  const now = Date.now() + clockOffset, dayN = Math.floor(now / DAY_MS);
+  for (let d = dayN; d < dayN + 3; d++) for (const hr of lionHours(d)) { const st = d * DAY_MS + hr / 24 * DAY_MS; if (st > now) return { s: (st - now) / 1000, fest: isFestDay(d), hr }; }
+  return { s: 9999, fest: false, hr: 19 };
+}
+// ---- lộ trình (đường gấp khúc) và các mốc thời gian ----
+const LR_W = [[1300, 2440], [700, 2440], [700, 1400]], LR_B = [[700, 1400], [700, 1700], [300, 1790], [40, 1840], [-200, 1980], [-410, 2130]], LR_C = [[-410, 2130], [-100, 2260], [300, 2300], [700, 2300], [700, 2440], [1400, 2440]];
+const LROUTE = LR_W.concat(LR_B.slice(1), LR_C.slice(1)), LCUM = [0];
+for (let i = 1; i < LROUTE.length; i++) LCUM.push(LCUM[i - 1] + Math.hypot(LROUTE[i][0] - LROUTE[i - 1][0], LROUTE[i][1] - LROUTE[i - 1][1]));
+const L_SA = LCUM[LR_W.length - 1], L_SB = LCUM[LR_W.length + LR_B.length - 2], L_END = LCUM[LCUM.length - 1], L_GATE = L_END - 320;
+const LC_A = { x: 700, y: 1300 }, LC_B = { x: -410, y: 2060 }, LOC_POLE = { x: -410, y: 2000 };
+const LPH = { w0: 0, a0: 34, a1: 64, b0: 92, b1: 140, end: LION_DUR };   // đi vào · múa chào · sang sân lễ hội · múa & hái lộc · ra về
+function lionLead(t) {
+  if (t < LPH.a0) return L_SA * t / LPH.a0;
+  if (t < LPH.a1) return L_SA;
+  if (t < LPH.b0) return L_SA + (L_SB - L_SA) * (t - LPH.a1) / (LPH.b0 - LPH.a1);
+  if (t < LPH.b1) return L_SB;
+  return L_SB + (L_END + 720 - L_SB) * (t - LPH.b1) / (LPH.end - LPH.b1);
+}
+function routeAt(s) {
+  s = clamp(s, 0, L_END); let i = 1; while (i < LCUM.length - 1 && LCUM[i] < s) i++;
+  const a = LROUTE[i - 1], b = LROUTE[i], seg = LCUM[i] - LCUM[i - 1] || 1, k = (s - LCUM[i - 1]) / seg, dx = (b[0] - a[0]) / seg, dy = (b[1] - a[1]) / seg;
+  return { x: a[0] + (b[0] - a[0]) * k, y: a[1] + (b[1] - a[1]) * k, dx, dy };
+}
+const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) * 1.2 ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+const sm01 = v => { v = clamp(v, 0, 1); return v * v * (3 - 2 * v); };
+// thành viên: vị trí khi đi (lag: cách người dẫn đầu bao xa trên đường, lat: lệch ngang) và vị trí khi múa
+const LMEM = {
+  flagL: { lag: 0, lat: -48 }, flagR: { lag: 0, lat: 48 }, ongdia: { lag: 75 },
+  lion0: { lag: 160, j: 0 }, lion1: { lag: 275, j: 1 }, cart: { lag: 390 }, cym: { lag: 460, lat: -42 }, gong: { lag: 460, lat: 42 },
+  plion0: { lag: 160, lat: -88, j: 2 }, plion1: { lag: 275, lat: 88, j: 3 }, plion2: { lag: 335, lat: -88, j: 4 },
+  pdrum0: { lag: 390, lat: -74 }, pdrum1: { lag: 390, lat: 74 }, pcym0: { lag: 460, lat: -100 }, pcym1: { lag: 460, lat: 100 }
+};
+for (let i = 0; i < 6; i++) LMEM["pfan" + i] = { lag: 530 + Math.floor(i / 2) * 48, lat: i % 2 ? 44 : -44 };
+const LION_COLS = [["#c8322a", "#f2c94c", "#2f8a5a"], ["#f0b429", "#c8322a", "#2a5aa8"], ["#2f8a5a", "#f2c94c", "#c8322a"], ["#2a2a2e", "#e3b04b", "#c8322a"], ["#f2efe6", "#3a6ab0", "#e3b04b"]];
+// vị trí khi đang múa ở một điểm (u: số giây kể từ lúc bắt đầu múa ở điểm đó, B: đang ở sân lễ hội)
+function lionDanceSpot(key, m, u, B) {
+  const C = B ? LC_B : LC_A, beat = u / LBEAT;
+  if (key === "flagL" || key === "flagR") return { x: C.x + (key === "flagL" ? -230 : 230), y: C.y - 30, dir: "down", mv: false };
+  if (key === "ongdia") { const x = C.x + Math.sin(u * .55) * 150, y = C.y + 60 + Math.cos(u * .8) * 40; return { x, y, dir: Math.cos(u * .55) > 0 ? "right" : "left", mv: true }; }
+  const S = B ? 1 : -1, face = B ? "left" : "right";   // nhóm nhạc: trước chánh điện đứng bên trái (bên phải là hồ sen), ở sân lễ hội đứng bên phải
+  if (key === "cart") return { x: C.x + S * 270, y: C.y + 120, dir: face, mv: false };
+  if (key === "cym") return { x: C.x + S * 240, y: C.y + 190, dir: face, mv: false };
+  if (key === "gong") return { x: C.x + S * 330, y: C.y + 190, dir: face, mv: false };
+  if (/^pdrum/.test(key)) return { x: C.x + S * (key === "pdrum0" ? 200 : 350), y: C.y + 95, dir: face, mv: false };
+  if (/^pcym/.test(key)) return { x: C.x + S * (key === "pcym0" ? 170 : 410), y: C.y + 200, dir: face, mv: false };
+  if (/^pfan/.test(key)) { const i = +key.slice(4); return { x: C.x - S * (200 + (i % 3) * 58), y: C.y + 175 + Math.floor(i / 3) * 50, dir: B ? "right" : "left", mv: false }; }
+  const j = m.j, row = [-60, 60, -180, 180, 0][j];
+  if (!B && u < 10) return { x: C.x + row, y: C.y - 30 + (j === 4 ? 90 : 0), dir: "up", mv: false, bow: (1 - Math.cos(Math.PI * 2 * u / 3.2)) / 2 };   // 3 lạy chào Phật
+  const hl = B && u >= 32 && u < 44;   // hái lộc
+  if (hl && j === 0) { const k = sm01((u - 32) / 2) * sm01((44 - u) / 2); return { x: lerp(C.x + 130, LOC_POLE.x, k), y: lerp(C.y, LOC_POLE.y + 30, k), dir: "up", mv: k < .95, rear: u > 34 && u < 40 ? 1 : 0, eat: u > 36 && u < 40 }; }
+  const R = hl ? 190 : 135, a = j * Math.PI * 2 / 5 + .42 * u, x = C.x + Math.cos(a) * R, y = C.y + Math.sin(a) * R * .6, tx = -Math.sin(a), ty = Math.cos(a) * .6;
+  const rp = (beat % 8) / 8; return { x, y, dir: dirOf(tx, ty), mv: true, rear: rp > .7 ? Math.sin((rp - .7) / .3 * Math.PI) : 0 };
+}
+function lionPos(key, t) {
+  const m = LMEM[key]; if (!m) return null; let s = lionLead(t) - m.lag;
+  const p = routeAt(s), lat = m.lat || 0, trail = { x: p.x - p.dy * lat, y: p.y + p.dx * lat, dir: dirOf(p.dx, p.dy), mv: true };
+  const walking = (t < LPH.a0) || (t > LPH.a1 && t < LPH.b0) || t > LPH.b1;
+  if (walking && s < 0) return null;   // chưa vào tới cổng
+  const vis = s < 0 ? 0 : s > L_GATE ? clamp(1 - (s - L_GATE) / 160, 0, 1) : 1; if (vis <= 0) return null;
+  let out = trail; out.ph = s / 13;
+  const inA = t >= LPH.a0 && t < LPH.a1, inB = t >= LPH.b0 && t < LPH.b1;
+  if (inA || inB) { const t0 = inA ? LPH.a0 : LPH.b0, t1 = inA ? LPH.a1 : LPH.b1, u = t - t0, k = sm01(u / 3) * sm01((t1 - t) / 3), d = lionDanceSpot(key, m, u, inB);
+    out = { x: lerp(trail.x, d.x, k), y: lerp(trail.y, d.y, k), dir: k > .5 ? d.dir : trail.dir, mv: k < .9 || d.mv, bow: (d.bow || 0) * k, rear: (d.rear || 0) * k, eat: d.eat, ph: u * 5.5 }; }
+  out.a = vis; return out;
+}
+// ---- nhịp trống chung (trống, chập chõa, thanh la) ----
+const LP_DRUM = [1, 0, .6, 0, 1, 0, 0, .7, 1, 0, .6, 0, 1, .7, .8, 0], LP_CYM = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1];
+function lionStep(t, i) {   // nhạc theo đoạn: lạy chào thì trống chậm, hái lộc thì trống dồn
+  const k = ((i % 16) + 16) % 16, bowing = t >= LPH.a0 && t < LPH.a0 + 10, climax = t >= LPH.b0 + 32 && t < LPH.b0 + 44;
+  if (bowing) return { d: k % 8 === 0 ? 1 : 0, c: 0, g: k === 0 ? 1 : 0 };
+  if (climax) return { d: k % 2 === 0 ? 1 : .65, c: k % 4 === 2 ? 1 : 0, g: k % 8 === 0 ? 1 : 0 };
+  return { d: LP_DRUM[k], c: LP_CYM[k], g: k === 0 || k === 8 ? 1 : 0 };
+}
+function cymHit(when, gv, dest) {   // chập chõa: tiếng kim loại xèo, tắt nhanh
+  const c = A.ctx; if (!c || !dest) return; const t = Math.max(when, c.currentTime);
+  const n = c.createBufferSource(), b = c.createBuffer(1, Math.floor(c.sampleRate * .5), c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+  n.buffer = b; const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 4200; const e = c.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(.5 * gv, t + .005); e.gain.exponentialRampToValueAtTime(.0001, t + .45);
+  n.connect(hp); hp.connect(e); e.connect(dest); n.start(t); n.stop(t + .5);
+  [[3150, .06], [4730, .05], [6200, .04]].forEach(([f, a]) => { const o = c.createOscillator(), og = c.createGain(); o.type = "square"; o.frequency.value = f; og.gain.setValueAtTime(.0001, t); og.gain.exponentialRampToValueAtTime(a * gv, t + .004); og.gain.exponentialRampToValueAtTime(.0001, t + .25); o.connect(og); og.connect(dest); o.start(t); o.stop(t + .3); });
+}
+function smallGongHit(when, gv, dest) {   // thanh la
+  const c = A.ctx; if (!c || !dest) return; const t = Math.max(when, c.currentTime);
+  [[620, .22, 1.3], [935, .12, 1], [1340, .08, .8], [1790, .05, .6]].forEach(([f, a, dc]) => { const o = c.createOscillator(), e = c.createGain(); o.frequency.value = f; e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(a * gv, t + .006); e.gain.exponentialRampToValueAtTime(.0001, t + dc); o.connect(e); e.connect(dest); o.start(t); o.stop(t + dc + .05); });
+}
+// ---- trạng thái chạy ----
+const LNPC = {};   // rig cho người trong đoàn
+["flagL", "flagR", "cym", "gong", "drummer"].forEach(k => LNPC[k] = { rig: newRig() });
+const LNPC_LOOK = { flagL: { body: 0, skin: 1, hair: 1, outfit: 3, color: 0, acc: 0 }, flagR: { body: 0, skin: 2, hair: 3, outfit: 3, color: 0, acc: 0 }, cym: { body: 0, skin: 1, hair: 4, outfit: 3, color: 0, acc: 0 }, gong: { body: 1, skin: 0, hair: 2, outfit: 3, color: 0, acc: 0 }, drummer: { body: 0, skin: 2, hair: 0, outfit: 3, color: 0, acc: 0 } };
+let lionNow = { on: false, t: 0, id: 0 }, lionLastStep = -1, lionNoticed = 0, lionLeaves = [], lionFxId = 0;
+function beatPulse(t) { const ph = (t / LSTEP) % 1; return ph < .3 ? 1 - ph / .3 : 0; }
+function updateLion(dt) {
+  const L = lionAt(); const was = lionNow; lionNow = L;
+  // thông báo trước 1 phút và lúc bắt đầu
+  if (!L.on && me.entered) { const nx = lionNextIn(); const key = Math.round((Date.now() / 1000 + nx.s) / 30); if (nx.s < 60 && lionNoticed !== key) { lionNoticed = key; toast("Đoàn lân sắp vào cổng tam quan" + (nx.fest ? " (ngày lễ)" : "") + "! Ra sân chùa để xem và cùng tham gia."); } }
+  if (L.on && !was.on && me.entered) toast("Đoàn lân đã tới! Chạm vào đoàn (hoặc Việc chùa → Đoàn lân) để múa lân, đánh trống cùng mọi người.");
+  if (!L.on && was.on && me.ln) lionLeave(true);
+  if (!L.on) { lionLastStep = -1; return; }
+  // nhạc: lên lịch từng phách theo thời gian chung
+  const si = Math.floor(L.t / LSTEP);
+  if (A.ctx && vol.on && si !== lionLastStep) {
+    const from = lionLastStep < 0 || si - lionLastStep > 3 ? si : lionLastStep + 1; const cp = lionPos("cart", L.t);
+    if (cp) { const d = Math.hypot(cp.x - me.x, cp.y - me.y); if (d < 2200) { const base = A.ctx.currentTime - L.t; for (let i = from; i <= si; i++) { const st = lionStep(L.t, i), when = base + i * LSTEP + .05; const dest = spatial(cp.x, cp.y, A.buses.drum, 2400); if (st.d) drumHit(when, .85 * st.d * cp.a, dest); if (st.c) cymHit(when, .55 * cp.a, dest); if (st.g) smallGongHit(when, .7 * cp.a, dest); } } }
+  }
+  lionLastStep = si;
+  // người trong đoàn (rig)
+  const pulse = beatPulse(L.t);
+  Object.entries(LNPC).forEach(([k, n]) => { const p = lionPos(k === "drummer" ? "cart" : k, L.t); animateRig(n.rig, "idle", 0, dt, !!(p && p.mv), null);
+    if (k === "drummer") { n.rig.hands = "strike"; n.rig.handK = 1; n.rig.mallet = lionStep(L.t, si).d ? pulse : 0; }
+    else if (k === "cym" || k === "gong") { n.rig.hands = "pray"; n.rig.handK = 1; }
+    else { n.rig.hands = "side"; } });
+  // hái lộc: lá rau bay ra (ai ở gần cũng thấy)
+  const lt = L.t - LPH.b0; if (lt > 39.6 && lt < 46 && lionFxId !== L.id && Math.hypot(me.x - LOC_POLE.x, me.y - LOC_POLE.y) < 1400) { lionFxId = L.id; celebrate(LOC_POLE.x, LOC_POLE.y + 20); for (let i = 0; i < 26; i++) lionLeaves.push({ x: LOC_POLE.x + rnd(-10, 10), y: LOC_POLE.y + 30, h: 150, vx: rnd(-80, 80), vy: rnd(-20, 60), vh: rnd(40, 160), r: rnd(0, 6), c: i % 5 === 0 ? "#c0392b" : "#6aa84f", t: 0 }); }
+  for (let i = lionLeaves.length - 1; i >= 0; i--) { const f = lionLeaves[i]; f.t += dt; f.x += f.vx * dt; f.y += f.vy * dt; f.vh -= 260 * dt; f.h = Math.max(0, f.h + f.vh * dt); f.r += dt * 4; if (f.t > 6) lionLeaves.splice(i, 1); }
+  peers.forEach(pp => { const v = pp.pr.ln; if (!lnValid(v) || v.id !== L.id) return; pp.lnRig = pp.lnRig || newRig(); const p = lionPos(v.k, L.t); animateRig(pp.lnRig, "idle", 0, dt, !!(p && p.mv), null); lnRigPose(pp.lnRig, v.r, L.t, pnow() - (pp.lnHit || 0) < 260); });
+  if (me.ln) lionMeTick(dt, L);
+}
+// ---- người chơi tham gia ----
+const LROLES = { lion: { n: "Múa lân", keys: ["plion0", "plion1", "plion2"], tap: "Lắc đầu ♪", d: "Thêm một con lân của bạn vào đoàn, bấm đúng nhịp trống để lân nhảy, lắc đầu" },
+  drum: { n: "Đánh trống lân", keys: ["pdrum0", "pdrum1"], tap: "Đánh trống ♪", d: "Đứng cạnh xe trống, gõ theo nhịp, cả đoàn nghe tiếng trống của bạn" },
+  cym: { n: "Đánh chập chõa", keys: ["pcym0", "pcym1"], tap: "Chập chõa ♪", d: "Chập hai lá chập chõa theo nhịp" },
+  fan: { n: "Đi theo cổ vũ", keys: ["pfan0", "pfan1", "pfan2", "pfan3", "pfan4", "pfan5"], tap: "Vỗ tay ♪", d: "Đi cùng đoàn, cầm cờ nhỏ vỗ tay theo nhịp" } };
+const lnValid = v => v && LROLES[v.r] && LMEM[v.k] && LROLES[v.r].keys.includes(v.k) && typeof v.id === "number";
+function lionTaken(r) { const used = new Set(); peers.forEach(pp => { const v = pp.pr.ln; if (lnValid(v) && v.id === lionNow.id && v.r === r) used.add(v.k); }); return used; }
+function lionJoin(r) {
+  if (!lionNow.on) return toast("Đoàn lân chưa tới. Xem giờ ở Việc chùa → Đoàn lân");
+  if (me.ln) return toast("Bạn đang ở trong đoàn rồi"); if (busy()) return toast("Xong việc đang làm rồi hãy tham gia nhé");
+  const used = lionTaken(r), k = LROLES[r].keys.find(x => !used.has(x)); if (!k) return toast(LROLES[r].n + " đã đủ người, chọn vai khác nhé");
+  const p = lionPos(k, lionNow.t) || lionPos("lion0", lionNow.t) || { x: 700, y: 2300 };
+  const go = () => { if (!lionNow.on) return; stowBroom(true); if (me.carry) { me.carry = null; sendPresence({ cr: 0 }); }
+    me.ln = { r, k, id: lionNow.id }; me.lnRig = newRig(); me.lnHits = 0; me.lnBeats = 0; me.lnGain = 0; me.lnLast = Math.floor(lionNow.t / LBEAT); me.lnTapped = -1; me.lnHit = 0; me.lnLoc = false;
+    sendPresence({ ln: me.ln }); setState("lion"); toast("Bạn đã vào đoàn: " + LROLES[r].n.toLowerCase() + ". Bấm nút " + LROLES[r].tap.replace(" ♪", "") + " (hoặc chạm màn hình, phím cách) đúng nhịp trống!"); };
+  if (Math.hypot(p.x - me.x, p.y - me.y) > 480) { toast("Đang đi tới chỗ đoàn lân…"); goTo(p.x, p.y + 60, go); } else go();
+}
+function lionLeave(ended) {
+  if (!me.ln) return; const g0 = me.lnGain | 0, role = LROLES[me.ln.r].n.toLowerCase(); me.ln = null; sendPresence({ ln: null });
+  if (me.st === "lion") { setState("idle"); if (!walkable(me.x, me.y)) { for (let i = 0; i < 20; i++) { const x = me.x + rnd(-60, 60), y = me.y + rnd(-60, 60); if (walkable(x, y)) { me.x = x; me.y = y; break; } } } }
+  toast((ended ? "Đoàn lân đã ra về. " : "Bạn đã rời đoàn. ") + (g0 ? "Bạn " + role + " được " + g0 + " công đức. A Di Đà Phật!" : "Lần sau bấm đúng nhịp để được công đức nhé."));
+}
+function lnTap() {
+  if (!me.ln || !lionNow.on) return; const b = lionNow.t / LBEAT, i = Math.round(b); me.lnHit = pnow();
+  const r = me.ln.r, c = A.ctx || audio(); if (c && vol.on) { const d = spatial(me.x, me.y, A.buses.drum); if (r === "drum") drumHit(0, .8, d); else if (r === "cym") cymHit(0, .5, d); else if (r === "fan") softStep(); }
+  if (Math.abs(b - i) < .27 && me.lnTapped !== i) { me.lnTapped = i; me.lnHits++; const el = $("acts").querySelector(".beat"); if (el) { el.classList.remove("hit"); void el.offsetWidth; el.classList.add("hit"); } }
+  if (me.ln && pnow() - (me.lnSent || 0) > 180) { me.lnSent = pnow(); sendPresence({ ev: { k: "ln", t: Date.now() } }); }
+}
+function lionMeTick(dt, L) {
+  if (L.id !== me.ln.id) return lionLeave(true);
+  if (L.t > LPH.b1 && lionLead(L.t) - LMEM[me.ln.k].lag > L_GATE - 160) return lionLeave(true);   // đoàn ra tới cổng: mình ở lại sân trước
+  const p = lionPos(me.ln.k, L.t);
+  if (p) { const dx = p.x - me.x, dy = p.y - me.y, d = Math.hypot(dx, dy); if (d > 900) { me.x = p.x; me.y = p.y; } else { const s = Math.min(d, Math.max(220, d * 3) * dt); if (d > .5) { me.x += dx / d * s; me.y += dy / d * s; } } me.dir = d > 30 ? dirOf(dx, dy) : p.dir; }
+  animateRig(me.lnRig, "idle", 0, dt, !!(p && p.mv), null); lnRigPose(me.lnRig, me.ln.r, L.t, pnow() - me.lnHit < 260);
+  const b = Math.floor(L.t / LBEAT); if (b !== me.lnLast) { me.lnLast = b; me.lnBeats++;
+    if (me.lnBeats % 8 === 0) { let others = 0; peers.forEach(pp => { const v = pp.pr.ln; if (lnValid(v) && v.id === L.id) others++; }); const k = clamp(me.lnHits / 8, 0, 1), cap = 70 - me.lnGain, gain = Math.min(cap, Math.round(k * 3 * (1 + others * .5) * groupBoost("lion")));
+      if (gain > 0) { addMerit(gain); me.lnGain += gain; } const mv = $("beatMove"); if (mv) mv.textContent = "Đúng nhịp " + Math.round(k * 100) + "%" + (others ? " · cùng " + others + " người" : ""); me.lnHits = 0; } }
+  const lt = L.t - LPH.b0; if (!me.lnLoc && lt > 40 && lt < 48) { me.lnLoc = true; const bonus = me.ln.r === "lion" ? 15 : 8; addMerit(bonus); me.lnGain += bonus; toast("Hái lộc đầu năm! Cả đoàn được lộc, bạn +" + bonus + " công đức.");
+    if (me.ln.r === "lion" && !inv.lionhat) { inv.lionhat = true; LS.set("inv", inv); setTimeout(() => toast("Bạn nhận được Mũ lân con! Trang bị ở mục Nhân vật."), 2500); itemChips(); } }
+  const ring = $("beatRing"); if (ring) ring.style.transform = "scale(" + (1.6 - ((L.t / LBEAT) % 1) * .6).toFixed(3) + ")";
+}
+function lnRigPose(R, role, t, hit) {
+  const pulse = beatPulse(t);
+  if (role === "drum") { R.hands = "strike"; R.handK = 1; R.mallet = hit ? 1 : pulse * .4; }
+  else if (role === "cym") { R.hands = "pray"; R.handK = hit ? 1 : .55 + pulse * .3; }
+  else if (role === "fan") { R.hands = hit ? "up" : "wave"; R.handK = 1; }
+  else R.hands = "side";
+}
+// ---- vẽ ----
+function drawLionLegs(g, xs, base, ph, mv, col, rearK, front) {   // ống quần lông + giày đen
+  xs.forEach((lx, i) => { const sw = mv ? Math.sin(ph + i * Math.PI) * 9 : 0, lift = mv ? Math.max(0, Math.sin(ph + i * Math.PI)) * 5 : 0, top = base - 38 - (front ? rearK * 26 : 0);
+    g.strokeStyle = col[0]; g.lineWidth = 11; g.lineCap = "round"; g.beginPath(); g.moveTo(lx, top); g.quadraticCurveTo(lx + sw * .4 + (front ? rearK * 10 : 0), base - 18 - lift, lx + sw, base - 6 - lift); g.stroke();
+    g.strokeStyle = "rgba(255,248,225,.9)"; g.lineWidth = 3; for (let k = 0; k < 3; k++) { const yy = top + 7 + k * 10; g.beginPath(); g.moveTo(lx - 6 + sw * k * .12, yy); g.lineTo(lx + 6 + sw * k * .12, yy + 1); g.stroke(); }
+    g.fillStyle = "#1c1612"; g.beginPath(); g.ellipse(lx + sw + 2, base - 3 - lift, 8, 4, 0, 0, 7); g.fill(); });
+}
+function lionFurRow(g, pts, col, r) { pts.forEach(([x, y], i) => { g.fillStyle = i % 2 ? col : "#fff8e4"; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }); }
+function drawLionBody(g, sd, hump, col, t, back) {   // tấm vải thân lân: vảy, sống lưng lông, tua rua viền dưới
+  const x0 = sd ? -64 * sd : -42, x1 = sd ? 18 * sd : 42, topY = -86 - hump, botY = -38;
+  g.save(); g.beginPath(); if (sd) { g.moveTo(x1, -70); g.quadraticCurveTo((x0 + x1) / 2, topY - 12, x0, -64); g.lineTo(x0 - sd * 6, botY); } else { g.moveTo(x0, botY); g.quadraticCurveTo(x0 - 6, topY, 0, topY - 8); g.quadraticCurveTo(x1 + 6, topY, x1, botY); }
+  for (let i = 0; i <= 12; i++) { const k = i / 12, xx = sd ? lerp(x0 - sd * 6, x1, k) : lerp(x1, x0, k); g.lineTo(xx, botY + (i % 2 ? 6 : 0) + Math.sin(t * 6 + k * 8) * 2); }
+  g.closePath(); const bg = g.createLinearGradient(0, topY, 0, botY); bg.addColorStop(0, shade(col[0], 1.12)); bg.addColorStop(1, shade(col[0], .8)); g.fillStyle = bg; g.fill(); g.clip();
+  g.strokeStyle = col[1]; g.lineWidth = 1.6; for (let r = 0; r < 5; r++) for (let i = -6; i <= 6; i++) { const xx = i * 12 + (r % 2) * 6, yy = topY + 10 + r * 10; g.beginPath(); g.arc(xx, yy, 6, .15 * Math.PI, .85 * Math.PI); g.stroke(); }   // vảy
+  g.fillStyle = col[2]; g.globalAlpha = .55; g.fillRect(-90, botY - 8, 180, 5); g.globalAlpha = 1; g.restore();
+  g.strokeStyle = col[1]; g.lineWidth = 2; for (let i = 0; i <= 16; i++) { const k = i / 16, xx = sd ? lerp(x0 - sd * 6, x1, k) : lerp(x0, x1, k); g.beginPath(); g.moveTo(xx, botY + 2); g.lineTo(xx + Math.sin(t * 7 + i) * 1.5, botY + 9); g.stroke(); }   // tua rua
+  const sp = []; for (let i = 0; i <= 8; i++) { const k = i / 8; if (sd) { const xx = lerp(x1 - sd * 6, x0 + sd * 4, k); sp.push([xx, lerp(-72, -66, k) - Math.sin(k * Math.PI) * (hump + 22)]); } else sp.push([0, topY - 2 + k * 30]); }
+  lionFurRow(g, sp, col[1], 4.2);   // sống lưng lông
+}
+function drawLionTail(g, x, y, t, col) { const w = Math.sin(t * 8) * 6; for (let i = 0; i < 6; i++) { g.fillStyle = i % 2 ? col[1] : "#fff8e4"; g.beginPath(); g.arc(x + w * i / 5, y + i * 4 - 4, 6 - i * .5, 0, 7); g.fill(); } }
+function drawLionHeadFront(g, hy, col, o) {   // đầu lân nhìn thẳng: gương trán, sừng, mắt to chớp, mũi, hàm há
+  const t = o.t, open = o.mouth, blink = o.blink;
+  lionFurRow(g, Array.from({ length: 22 }, (_, i) => { const a = Math.PI * .1 + i / 21 * Math.PI * 1.8; return [Math.cos(a + Math.PI / 2) * 40, hy + Math.sin(a + Math.PI / 2) * 36 + 4]; }), col[1], 7);   // bờm lông quanh đầu
+  const fg = g.createRadialGradient(-8, hy - 12, 4, 0, hy, 40); fg.addColorStop(0, shade(col[0], 1.25)); fg.addColorStop(1, shade(col[0], .78)); g.fillStyle = fg; g.beginPath(); g.ellipse(0, hy, 34, 30, 0, 0, 7); g.fill();
+  g.fillStyle = col[1]; g.beginPath(); g.moveTo(-6, hy - 26); g.quadraticCurveTo(0, hy - 58, 8, hy - 50); g.quadraticCurveTo(3, hy - 40, 6, hy - 26); g.fill();   // sừng
+  g.fillStyle = "#d8dde2"; g.beginPath(); g.arc(0, hy - 18, 6.5, 0, 7); g.fill(); g.strokeStyle = col[1]; g.lineWidth = 2; g.stroke(); g.fillStyle = "rgba(255,255,255,.85)"; g.beginPath(); g.arc(-2, hy - 20, 2, 0, 7); g.fill();   // gương trán
+  [-1, 1].forEach(s => { const ex = s * 15, ey = hy - 4;
+    g.fillStyle = "#fff8e4"; g.beginPath(); g.ellipse(ex, ey - 9, 11, 4, s * -.2, 0, 7); g.fill();   // lông mày
+    g.fillStyle = "#fff"; g.beginPath(); g.ellipse(ex, ey, 9, 8, 0, 0, 7); g.fill(); g.fillStyle = "#151515"; g.beginPath(); g.arc(ex + Math.sin(t * .9) * 2.5, ey + 1, 4.4, 0, 7); g.fill(); g.fillStyle = "#fff"; g.beginPath(); g.arc(ex + Math.sin(t * .9) * 2.5 - 1.4, ey - .6, 1.3, 0, 7); g.fill();
+    if (blink > .05) { g.fillStyle = col[1]; g.beginPath(); g.ellipse(ex, ey - 8 + blink * 8, 10, 9 * blink, 0, Math.PI, 0); g.fill(); }
+    g.fillStyle = "#fff8e4"; g.beginPath(); g.arc(s * 30, hy + 8, 6, 0, 7); g.fill(); g.fillStyle = col[2]; g.beginPath(); g.arc(s * 30, hy + 8, 3, 0, 7); g.fill(); });   // má bông
+  g.fillStyle = col[1]; g.beginPath(); g.ellipse(0, hy + 9, 10, 8, 0, 0, 7); g.fill(); g.fillStyle = shade(col[1], .7); g.beginPath(); g.arc(-4, hy + 11, 2, 0, 7); g.arc(4, hy + 11, 2, 0, 7); g.fill();   // mũi
+  const jy = hy + 18 + open * 12; g.fillStyle = "#5a0c0c"; g.beginPath(); g.ellipse(0, hy + 20 + open * 5, 20, 3 + open * 8, 0, 0, 7); g.fill();
+  g.fillStyle = "#c0392b"; g.beginPath(); g.ellipse(0, hy + 23 + open * 7, 9, 2 + open * 4, 0, 0, 7); g.fill();
+  g.fillStyle = "#fff"; for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(i * 5 - 2, hy + 17); g.lineTo(i * 5, hy + 21); g.lineTo(i * 5 + 2, hy + 17); g.fill(); }
+  g.fillStyle = shade(col[0], .9); g.beginPath(); g.ellipse(0, jy + 4, 22, 7, 0, 0, Math.PI); g.fill(); g.strokeStyle = col[1]; g.lineWidth = 2; g.beginPath(); g.ellipse(0, jy + 4, 22, 7, 0, 0, Math.PI); g.stroke();
+  lionFurRow(g, Array.from({ length: 7 }, (_, i) => [(i - 3) * 6, jy + 13 + Math.abs(i - 3) * -1]), "#fff8e4", 5);   // râu dưới cằm
+}
+function drawLionHeadSide(g, sd, hx, hy, col, o) {   // đầu lân nhìn nghiêng
+  const t = o.t, open = o.mouth, blink = o.blink;
+  g.save(); g.translate(hx, hy); g.scale(sd, 1);
+  lionFurRow(g, Array.from({ length: 12 }, (_, i) => { const a = Math.PI * .55 + i / 11 * Math.PI * .95; return [Math.cos(a) * 30 - 6, Math.sin(a) * 30]; }), col[1], 6.5);   // bờm sau
+  const fg = g.createRadialGradient(4, -10, 4, 0, 0, 36); fg.addColorStop(0, shade(col[0], 1.25)); fg.addColorStop(1, shade(col[0], .8)); g.fillStyle = fg; g.beginPath(); g.ellipse(4, 0, 30, 25, -.08, 0, 7); g.fill();
+  g.fillStyle = col[1]; g.beginPath(); g.moveTo(2, -22); g.quadraticCurveTo(14, -52, 24, -44); g.quadraticCurveTo(14, -36, 12, -22); g.fill();   // sừng
+  g.fillStyle = "#fff8e4"; g.beginPath(); g.ellipse(-10, -10, 7, 12, -.5, 0, 7); g.fill(); g.fillStyle = shade(col[0], .62); g.beginPath(); g.ellipse(-10, -9, 3, 8, -.5, 0, 7); g.fill();   // tai
+  g.fillStyle = "#fff8e4"; g.beginPath(); g.ellipse(14, -13, 10, 4, -.2, 0, 7); g.fill(); g.fillStyle = "#fff"; g.beginPath(); g.ellipse(15, -4, 8, 7.5, 0, 0, 7); g.fill(); g.fillStyle = "#151515"; g.beginPath(); g.arc(18, -3, 4, 0, 7); g.fill(); g.fillStyle = "#fff"; g.beginPath(); g.arc(17, -4.5, 1.2, 0, 7); g.fill();
+  if (blink > .05) { g.fillStyle = col[1]; g.beginPath(); g.ellipse(15, -11 + blink * 7, 9, 8 * blink, 0, Math.PI, 0); g.fill(); }
+  g.fillStyle = col[1]; g.beginPath(); g.ellipse(33, 2, 8, 7, 0, 0, 7); g.fill();   // mũi
+  g.fillStyle = "#5a0c0c"; g.beginPath(); g.moveTo(10, 12); g.lineTo(36, 10); g.lineTo(32, 14 + open * 14); g.lineTo(12, 16); g.closePath(); g.fill();
+  g.fillStyle = "#fff"; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(16 + i * 5, 11); g.lineTo(18 + i * 5, 15); g.lineTo(20 + i * 5, 11); g.fill(); }
+  g.save(); g.translate(12, 16); g.rotate(open * .45); g.fillStyle = shade(col[0], .9); g.beginPath(); g.ellipse(10, 2, 16, 5, .05, 0, 7); g.fill(); g.strokeStyle = col[1]; g.lineWidth = 1.6; g.stroke();
+  lionFurRow(g, Array.from({ length: 5 }, (_, i) => [2 + i * 5, 9 + Math.sin(i) * 1.5]), "#fff8e4", 4.6); g.restore();
+  g.restore();
+}
+function drawLionHeadBack(g, hy, col) { lionFurRow(g, Array.from({ length: 14 }, (_, i) => { const a = Math.PI + i / 13 * Math.PI; return [Math.cos(a) * 36, hy + Math.sin(a) * 26 + 6]; }), col[1], 7); g.fillStyle = shade(col[0], .85); g.beginPath(); g.ellipse(0, hy + 4, 32, 22, 0, Math.PI, 0); g.fill(); g.fillStyle = col[1]; g.beginPath(); g.moveTo(-6, hy - 16); g.quadraticCurveTo(0, hy - 46, 8, hy - 40); g.quadraticCurveTo(3, hy - 30, 6, hy - 16); g.fill(); }
+function drawLion(g, x, y, o) {   // o: dir, col, t, ph, mv, bow, rear, mouth, blink, shake, a
+  const col = o.col, t = o.t, sd = o.dir === "left" ? -1 : o.dir === "right" ? 1 : 0, rear = o.rear || 0, bob = o.mv ? Math.abs(Math.sin(o.ph)) * 3 : Math.sin(t * 5) * 1.5;
+  const lift = rear * 52 - (o.bow || 0) * 46 + bob + (o.jump || 0) * 18, hump = 6 + rear * 14 - (o.bow || 0) * 6;
+  g.save(); g.translate(x, y); if (o.a < 1) g.globalAlpha *= o.a;
+  g.fillStyle = "rgba(0,0,0,.32)"; g.beginPath(); g.ellipse(sd ? -18 * sd : 0, 3, sd ? 66 : 46, 11, 0, 0, 7); g.fill();
+  const sh = (o.shake || 0);
+  if (sd) {
+    drawLionLegs(g, [-50 * sd, -36 * sd], 0, o.ph + 1.6, o.mv, col, 0, false);   // chân người sau
+    drawLionTail(g, -66 * sd, -58, t, col);
+    drawLionBody(g, sd, hump, col, t, false);
+    drawLionLegs(g, [8 * sd, 20 * sd], 0, o.ph, o.mv, col, rear, true);   // chân người trước
+    g.save(); g.translate(24 * sd, -80 - lift); g.rotate(sh * sd - rear * .35 * sd + (o.bow || 0) * .5 * sd); drawLionHeadSide(g, sd, 0, 0, col, o); g.restore();
+  } else if (o.dir === "up") {
+    drawLionLegs(g, [-14, 14], 0, o.ph + 1.6, o.mv, col, 0, false);
+    g.save(); g.translate(0, -lift * .4); drawLionHeadBack(g, -96 - lift * .6, col); g.restore();
+    drawLionBody(g, 0, hump, col, t, true); drawLionTail(g, 0, -60, t, col);
+  } else {
+    drawLionLegs(g, [-24, 24], 0, o.ph + 1.6, o.mv, col, 0, false);
+    drawLionBody(g, 0, hump, col, t, false);
+    drawLionLegs(g, [-12, 12], 0, o.ph, o.mv, col, rear, true);
+    g.save(); g.translate(0, -84 - lift); g.rotate(sh); drawLionHeadFront(g, 0, col, o); g.restore();
+  }
+  g.restore();
+}
+function drawOngDia(g, x, y, o) {   // Ông Địa: mặt nạ cười to, bụng phệ, quạt mo
+  const t = o.t, sd = o.dir === "left" ? -1 : o.dir === "right" ? 1 : 0, back = o.dir === "up", wob = o.mv ? Math.sin(o.ph) * .08 : Math.sin(t * 3) * .05, bob = o.mv ? Math.abs(Math.sin(o.ph)) * 3 : 0;
+  g.save(); g.translate(x, y); if (o.a < 1) g.globalAlpha *= o.a;
+  g.fillStyle = "rgba(0,0,0,.3)"; g.beginPath(); g.ellipse(0, 3, 30, 8, 0, 0, 7); g.fill();
+  [-1, 1].forEach(s => { const sw = o.mv ? Math.sin(o.ph + (s > 0 ? Math.PI : 0)) * 6 : 0; g.strokeStyle = "#5a3a22"; g.lineWidth = 10; g.lineCap = "round"; g.beginPath(); g.moveTo(s * 11, -36); g.lineTo(s * 12 + sw, -6); g.stroke(); g.fillStyle = "#1c1612"; g.beginPath(); g.ellipse(s * 12 + sw + 2, -3, 8, 4, 0, 0, 7); g.fill(); });
+  g.rotate(wob); g.translate(0, -bob);
+  g.fillStyle = "#e9b04a"; g.beginPath(); g.ellipse(0, -62, 30, 30, 0, 0, 7); g.fill();   // áo
+  if (!back) { g.fillStyle = "#f6c9a0"; g.beginPath(); g.ellipse(0, -56, 19, 22, 0, 0, 7); g.fill(); g.fillStyle = "rgba(200,120,90,.6)"; g.beginPath(); g.arc(0, -52, 2, 0, 7); g.fill(); }   // bụng phệ
+  const fanA = Math.sin(t * 7) * .7;   // tay cầm quạt
+  g.save(); g.translate(24, -78); g.rotate(-.6 + fanA); g.strokeStyle = "#f6c9a0"; g.lineWidth = 7; g.beginPath(); g.moveTo(0, 0); g.lineTo(16, -16); g.stroke();
+  g.fillStyle = "#d9c08a"; g.beginPath(); g.moveTo(16, -16); g.quadraticCurveTo(40, -34, 30, -54); g.quadraticCurveTo(12, -44, 16, -16); g.fill(); g.strokeStyle = "rgba(120,90,40,.6)"; g.lineWidth = 1; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(16, -16); g.lineTo(22 + k * 4, -50 + k * 4); g.stroke(); } g.restore();
+  g.strokeStyle = "#f6c9a0"; g.lineWidth = 7; g.beginPath(); g.moveTo(-24, -76); g.quadraticCurveTo(-30, -58, -14, -52); g.stroke();
+  const hy = -112; if (back) { g.fillStyle = "#f2b48a"; g.beginPath(); g.arc(0, hy, 26, 0, 7); g.fill(); g.restore(); return; }
+  g.fillStyle = "#f6c09a"; g.beginPath(); g.ellipse(0, hy, 27, 28, 0, 0, 7); g.fill(); g.fillStyle = "rgba(255,255,255,.35)"; g.beginPath(); g.ellipse(-8, hy - 14, 10, 7, -.3, 0, 7); g.fill();   // mặt nạ hói bóng
+  g.fillStyle = "rgba(230,110,110,.55)"; g.beginPath(); g.arc(-15, hy + 6, 6, 0, 7); g.arc(15, hy + 6, 6, 0, 7); g.fill();
+  g.strokeStyle = "#3a2010"; g.lineWidth = 2.4; [-1, 1].forEach(s => { g.beginPath(); g.arc(s * 10, hy - 3, 5, Math.PI * 1.1, Math.PI * 1.9); g.stroke(); });   // mắt cười híp
+  g.fillStyle = "#7a1a10"; g.beginPath(); g.moveTo(-16, hy + 6); g.quadraticCurveTo(0, hy + 30, 16, hy + 6); g.closePath(); g.fill(); g.fillStyle = "#fff"; g.fillRect(-11, hy + 7, 22, 4);   // miệng cười toe
+  g.restore();
+}
+function drawFlagPole(g, x, y, t, k, a) {   // cờ ngũ sắc
+  g.save(); g.translate(x, y); if (a < 1) g.globalAlpha *= a; g.strokeStyle = "#7a4a22"; g.lineWidth = 3; g.beginPath(); g.moveTo(18, -14); g.lineTo(18, -178); g.stroke(); g.fillStyle = "#e3b04b"; g.beginPath(); g.arc(18, -181, 4, 0, 7); g.fill();
+  const cs = ["#2a5aa8", "#f2c94c", "#c8322a", "#f6f1e6", "#e0802a"]; cs.forEach((c, i) => { g.fillStyle = c; g.beginPath(); for (let s = 0; s <= 10; s++) { const xx = 18 + s * 7, wv = Math.sin(t * 5 + s * .6 + k) * (s * .7); s ? g.lineTo(xx, -174 + i * 9 + wv) : g.moveTo(xx, -174 + i * 9); } for (let s = 10; s >= 0; s--) { const xx = 18 + s * 7, wv = Math.sin(t * 5 + s * .6 + k) * (s * .7); g.lineTo(xx, -165 + i * 9 + wv); } g.closePath(); g.fill(); });
+  g.restore();
+}
+function drawLionCart(g, x, y, t, dir, hitK, a) {   // xe trống lân: bánh gỗ, giá, trống đỏ đinh vàng
+  g.save(); g.translate(x, y); if (a < 1) g.globalAlpha *= a; const sd = dir === "left" || dir === "right";
+  g.fillStyle = "rgba(0,0,0,.32)"; g.beginPath(); g.ellipse(0, 4, 52, 12, 0, 0, 7); g.fill();
+  if (sd) [-30, 30].forEach(wx => { g.strokeStyle = "#4a2e1a"; g.lineWidth = 4; g.beginPath(); g.arc(wx, -16, 14, 0, 7); g.stroke(); for (let k = 0; k < 4; k++) { const an = k * Math.PI / 4 + t * 2; g.beginPath(); g.moveTo(wx, -16); g.lineTo(wx + Math.cos(an) * 14, -16 + Math.sin(an) * 14); g.stroke(); } });
+  else [-40, 40].forEach(wx => { g.fillStyle = "#4a2e1a"; g.beginPath(); g.ellipse(wx, -16, 5, 15, 0, 0, 7); g.fill(); });
+  g.fillStyle = "#7a5230"; g.fillRect(-46, -36, 92, 8); g.fillStyle = "#5a3a22"; g.fillRect(-40, -30, 6, 18); g.fillRect(34, -30, 6, 18);
+  const dg = g.createLinearGradient(-30, 0, 30, 0); dg.addColorStop(0, "#6a1a10"); dg.addColorStop(.5, "#c8322a"); dg.addColorStop(1, "#5a140c"); g.fillStyle = dg; g.beginPath(); g.moveTo(-30, -44); g.quadraticCurveTo(-36, -64, -30, -84); g.lineTo(30, -84); g.quadraticCurveTo(36, -64, 30, -44); g.closePath(); g.fill();
+  g.fillStyle = "#e3b04b"; for (let k = 0; k < 9; k++) { g.beginPath(); g.arc(-28 + k * 7, -82, 1.6, 0, 7); g.arc(-28 + k * 7, -46, 1.6, 0, 7); g.fill(); }
+  g.fillStyle = "#efe0bc"; g.beginPath(); g.ellipse(0, -84, 30, 7, 0, 0, 7); g.fill(); g.strokeStyle = "#8a5a22"; g.lineWidth = 1.2; g.stroke();
+  if (hitK > .05) { g.strokeStyle = "rgba(255,240,200," + (hitK * .6).toFixed(2) + ")"; g.lineWidth = 2; g.beginPath(); g.ellipse(0, -84, 30 + hitK * 10, 7 + hitK * 3, 0, 0, 7); g.stroke(); }
+  g.fillStyle = "#e3b04b"; g.font = "700 11px 'Noto Serif Display', serif"; g.textAlign = "center"; g.fillText("龍", 0, -60);
+  g.restore();
+}
+function drawCymbals(g, x, y, open, a) { g.save(); g.translate(x, y); if (a < 1) g.globalAlpha *= a; [-1, 1].forEach(s => { g.fillStyle = "#d9a845"; g.beginPath(); g.ellipse(s * (4 + open * 9), -58, 3.5, 12, 0, 0, 7); g.fill(); g.fillStyle = "#f6d482"; g.beginPath(); g.ellipse(s * (4 + open * 9) - s, -58, 1.5, 9, 0, 0, 7); g.fill(); }); g.restore(); }
+function drawSmallGong(g, x, y, a) { g.save(); g.translate(x, y); if (a < 1) g.globalAlpha *= a; g.strokeStyle = "#5a3a22"; g.lineWidth = 1; g.beginPath(); g.moveTo(-10, -84); g.lineTo(0, -76); g.lineTo(10, -84); g.stroke(); const gg = g.createRadialGradient(-3, -66, 1, 0, -64, 12); gg.addColorStop(0, "#fff1b8"); gg.addColorStop(1, "#b8862e"); g.fillStyle = gg; g.beginPath(); g.arc(0, -64, 12, 0, 7); g.fill(); g.strokeStyle = "#8a5a22"; g.lineWidth = 1.5; g.stroke(); g.restore(); }
+function drawLocPole(g, eaten) {   // cây nêu treo lộc (bó rau xanh + bao lì xì) trước sân khấu
+  const { x, y } = LOC_POLE; g.strokeStyle = "#8a6438"; g.lineWidth = 5; g.beginPath(); g.moveTo(x + 50, y); g.lineTo(x + 50, y - 230); g.quadraticCurveTo(x + 20, y - 236, x, y - 226); g.stroke();
+  g.strokeStyle = "#c9b48a"; g.lineWidth = 1.2; g.beginPath(); g.moveTo(x, y - 226); g.lineTo(x, y - 190); g.stroke();
+  if (eaten) return; g.fillStyle = "#c0392b"; roundRect(g, x - 9, y - 190, 18, 26, 3); g.fill(); g.fillStyle = "#f2c94c"; g.font = "700 9px 'Noto Serif Display', serif"; g.textAlign = "center"; g.fillText("福", x, y - 172);
+  g.fillStyle = "#5fa84a"; for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; g.beginPath(); g.ellipse(x + Math.cos(a) * 9, y - 156 + Math.sin(a) * 5, 9, 6, a, 0, 7); g.fill(); } g.fillStyle = "#8bc66a"; g.beginPath(); g.arc(x, y - 158, 7, 0, 7); g.fill();
+}
+function lionOpts(key, p, t, extra) {   // thông số vẽ chung cho một con lân
+  const st = lionStep(t, Math.floor(t / LSTEP)), pulse = beatPulse(t), j = (LMEM[key] || {}).j || 0;
+  const blink = ((t * .37 + j * .21) % 3) < .12 ? 1 : 0, mouth = clamp((p.eat ? .5 + .5 * Math.abs(Math.sin(t * 9)) : 0) + (st.d ? pulse * .7 : 0), 0, 1);
+  return Object.assign({ dir: p.dir, col: LION_COLS[j % LION_COLS.length], t: t + j, ph: p.ph || 0, mv: p.mv, bow: p.bow || 0, rear: p.rear || 0, mouth, blink, shake: Math.sin(t * 7 + j) * .12 * (p.mv ? 1 : .5), a: p.a == null ? 1 : p.a }, extra || {});
+}
+// thêm các thành viên vào danh sách vẽ (sắp theo chiều sâu)
+function addLionItems(add, ts) {
+  if (!lionNow.on) return; const t = lionNow.t, pulse = beatPulse(t), st = lionStep(t, Math.floor(t / LSTEP)), lt = t - LPH.b0;
+  if (t > LPH.b0 - 6 && t < LPH.b1 + 4) add(LOC_POLE.y, () => { upright(LOC_POLE.x, LOC_POLE.y); drawLocPole(g, lt > 39.6); });
+  ["flagL", "flagR"].forEach((k, i) => { const p = lionPos(k, t); if (!p) return; add(p.y, () => { upright(p.x, p.y); g.globalAlpha = p.a; drawChar(g, { x: p.x, y: p.y, dir: p.dir, ap: LNPC_LOOK[k], rig: LNPC[k].rig }, ts); g.globalAlpha = 1; drawFlagPole(g, p.x, p.y, t, i * 2, p.a); }); });
+  { const p = lionPos("ongdia", t); if (p) add(p.y, () => { upright(p.x, p.y); drawOngDia(g, p.x, p.y, { dir: p.dir, t, ph: p.ph, mv: p.mv, a: p.a }); }); }
+  ["lion0", "lion1"].forEach(k => { const p = lionPos(k, t); if (p) add(p.y, () => { upright(p.x, p.y); drawLion(g, p.x, p.y, lionOpts(k, p, t)); }); });
+  { const p = lionPos("cart", t); if (p) { const back = p.dir === "up" ? -1 : 1, dx = p.dir === "left" ? 40 : p.dir === "right" ? -40 : 0, dy = p.dir === "up" ? 26 : p.dir === "down" ? -26 : 0;
+    add(p.y + dy, () => { upright(p.x + dx, p.y + dy); g.globalAlpha = p.a; drawChar(g, { x: p.x + dx, y: p.y + dy, dir: p.dir === "left" ? "left" : p.dir === "right" ? "right" : p.dir, ap: LNPC_LOOK.drummer, rig: LNPC.drummer.rig }, ts); g.globalAlpha = 1; });
+    add(p.y, () => { upright(p.x, p.y); drawLionCart(g, p.x, p.y, t, p.dir, st.d ? pulse : 0, p.a); }); } }
+  [["cym", 0], ["gong", 1]].forEach(([k]) => { const p = lionPos(k, t); if (!p) return; add(p.y, () => { upright(p.x, p.y); g.globalAlpha = p.a; drawChar(g, { x: p.x, y: p.y, dir: p.dir, ap: LNPC_LOOK[k], rig: LNPC[k].rig }, ts); g.globalAlpha = 1; if (k === "cym") drawCymbals(g, p.x, p.y, st.c ? 1 - pulse : 1, p.a); else drawSmallGong(g, p.x, p.y, p.a); }); });
+  lionLeaves.forEach(f => { if (f.y >= near()) return; add(f.y, () => { upright(f.x, f.y); g.fillStyle = f.c; g.beginPath(); g.ellipse(f.x, f.y - f.h, 5, 3, f.r, 0, 7); g.fill(); }); });
+}
+// vẽ một người chơi đang ở trong đoàn (mình hoặc người khác); trả về false nếu không phải
+function drawLnPlayer(c, v, rig, hitAgo, ts) {
+  if (!lionNow.on || !lnValid(v) || v.id !== lionNow.id) return false; const t = lionNow.t, p = lionPos(v.k, t) || { dir: c.dir, mv: false, ph: 0, a: 1 }, st = lionStep(t, Math.floor(t / LSTEP)), pulse = beatPulse(t);
+  const hit = hitAgo < 260 ? 1 - hitAgo / 260 : 0, pp = Object.assign({}, p, { dir: c.dir || p.dir, a: 1 });
+  if (v.r === "lion") { drawLion(g, c.x, c.y, lionOpts(v.k, pp, t, { jump: hit, shake: (Math.sin(t * 7) * .12) + hit * .35 * Math.sin(ts * 40), mouth: clamp(hit + (st.d ? pulse * .5 : 0), 0, 1) })); return true; }
+  drawChar(g, { x: c.x, y: c.y, dir: c.dir, ap: c.ap, rig: rig || c.rig }, ts);
+  if (v.r === "drum") { const dx = c.dir === "left" ? -34 : c.dir === "right" ? 34 : 0; g.save(); g.translate(c.x + dx, c.y + 6); g.scale(.62, .62); drawLionCart(g, 0, 0, t, "down", hit, 1); g.restore(); }
+  else if (v.r === "cym") drawCymbals(g, c.x, c.y, hit ? 0 : (st.c ? 1 - pulse : 1), 1);
+  else drawFlagPole(g, c.x - 6, c.y + 40, t, 3, 1);
+  return true;
+}
+// menu đoàn lân
+function openLionMenu() {
+  const p = $("picker"); p.hidden = false; p.textContent = ""; p.dataset.mode = "lion";
+  const sec = tx => { const h = document.createElement("div"); h.className = "sec"; h.textContent = tx; p.append(h); };
+  const item = (tt, d, fn, dis) => { const b = document.createElement("button"); b.type = "button"; b.className = "k"; const x1 = document.createElement("b"); x1.textContent = tt; const x2 = document.createElement("span"); x2.textContent = d; b.append(x1, x2); b.disabled = !!dis; b.addEventListener("click", () => { p.hidden = true; audio(); fn(); }); p.append(b); };
+  if (lionNow.on) {
+    const where = lionNow.t < LPH.a0 ? "đang vào cổng tam quan" : lionNow.t < LPH.a1 ? "đang múa chào trước chánh điện" : lionNow.t < LPH.b0 ? "đang sang Sân lễ hội" : lionNow.t < LPH.b1 ? "đang múa ở Sân lễ hội" + (lionNow.t - LPH.b0 < 40 ? ", sắp hái lộc" : "") : "đang ra về";
+    sec("Đoàn lân " + where + " · còn " + Math.ceil(LION_DUR - lionNow.t) + " giây");
+    if (me.ln) item("Rời đoàn", "Bạn đang " + LROLES[me.ln.r].n.toLowerCase() + " · đã được " + (me.lnGain | 0) + " công đức", () => lionLeave(false));
+    else Object.entries(LROLES).forEach(([r, R]) => { const free = R.keys.length - lionTaken(r).size; item(R.n, R.d + " · còn " + free + " chỗ", () => lionJoin(r), free <= 0); });
+    const lp = lionPos("lion0", lionNow.t) || lionPos("flagL", lionNow.t); if (lp && !me.ln) item("Đi tới xem đoàn lân", "Cách " + Math.round(Math.hypot(lp.x - me.x, lp.y - me.y) / 10) + " bước", () => { if (busy()) return toast("Xong việc đang làm rồi hãy đi nhé"); goTo(lp.x + 120, lp.y + 120); });
+  } else {
+    const nx = lionNextIn(), m = Math.floor(nx.s / 60), s2 = Math.floor(nx.s % 60);
+    sec("Đoàn lân · giờ lễ 19:00 mỗi ngày, ngày lễ thêm 9:00 sáng");
+    item("Lượt kế tiếp sau " + (m ? m + " phút " : "") + s2 + " giây", (nx.fest ? "Ngày lễ · " : "") + nx.hr + ":00 trong game. Đoàn vào từ cổng tam quan, múa chào chánh điện, rồi sang Sân lễ hội hái lộc.", () => { if (busy()) return; goTo(700, 1700); }, false);
+  }
+  const c = document.createElement("button"); c.type = "button"; c.className = "sm"; c.textContent = "Đóng"; c.addEventListener("click", () => { p.hidden = true; }); p.append(c);
+}
+function lionNearest() { if (!lionNow.on) return null; let best = null, bd = 1e9; ["lion0", "lion1", "ongdia", "cart", "flagL"].forEach(k => { const p = lionPos(k, lionNow.t); if (!p) return; const d = Math.hypot(p.x - me.x, p.y - me.y); if (d < bd) { bd = d; best = Object.assign({ d, k }, p); } }); return best; }
+function drawLionMini(m, X, Y) { if (!lionNow.on) return; const p = lionPos("lion0", lionNow.t) || lionPos("flagL", lionNow.t); if (!p) return; m.fillStyle = "#e0502a"; m.strokeStyle = "#ffe08a"; m.lineWidth = 2; m.beginPath(); m.arc(X(p.x), Y(p.y), 6, 0, 7); m.fill(); m.stroke(); m.fillStyle = "#ffe08a"; m.fillText("Đoàn lân", X(p.x), Y(p.y) - 9); }
 // menu "Việc chùa"
 function toggleWork(show) {
   const p = $("picker"); p.hidden = !show; if (!show) return; p.textContent = ""; p.dataset.mode = "work";
@@ -1791,6 +2146,7 @@ function toggleWork(show) {
   const ys = yardState(), cs = cookSum(), ripe = PLOTS.filter(pl => plotStage(GARDEN[pl.id]) >= 3).length, empty = PLOTS.filter(pl => plotStage(GARDEN[pl.id]) < 0).length, thirsty = PLOTS.filter(pl => { const v = GARDEN[pl.id], s2 = plotStage(v); return s2 >= 0 && s2 < 3; }).length;
   const item = (t, d, fn) => { const b = document.createElement("button"); b.type = "button"; b.className = "k"; const tt = document.createElement("b"); tt.textContent = t; const dd = document.createElement("span"); dd.textContent = d; b.append(tt, dd); b.addEventListener("click", () => { toggleWork(false); audio(); fn(); }); p.append(b); };
   item("Quét sân", (me.carry === "broom" ? "Đang cầm chổi · " : "Lấy chổi ở giá chổi · ") + (ys.rem > 0 ? "sân sạch " + ys.pct + "%" : "sân hôm nay đã sạch"), ACT.sweep);
+  { const nx = lionNextIn(); item("Đoàn lân", lionNow.on ? "Đoàn đang múa! Múa lân, đánh trống, chập chõa, đi theo cổ vũ" : "Giờ lễ 19:00 (ngày lễ thêm 9:00) · lượt tới sau " + Math.ceil(nx.s / 60) + " phút", openLionMenu); }
   item("Nấu món chay & việc bếp", "Canh, đậu hũ sốt cà, nem, bánh bao, xôi gấc, chè · lau bàn, rửa bát, pha trà, bổ củi", openKitchenMenu);
   item("Ăn cơm ở Trai đường", "Ngồi vào bàn thọ trai · ăn chung được thêm công đức", startEat);
   item("Nấu ăn tập thể", cs.done ? "Bữa này đã xong · bưng mâm đi phát" : ROLES.map(r => r.n + " " + cs[r.k] + "/" + r.need).join(" · "), () => openCook());
@@ -1882,6 +2238,11 @@ const ITEMS = {
   bowl:     { n: "Bình bát",           slot: "hand", col: "#3a2a22", w: 16 },
   mala:     { n: "Chuỗi bồ đề 108 hạt", slot: "neck", col: "#7a4a22", w: 16 },
   lamp:     { n: "Đèn hoa sen",        slot: "hand", col: "#f3a9be", w: 14 },
+  lotus:    { n: "Bông sen trắng",     slot: "hand", col: "#f4f0e6", w: 12 },
+  handbell: { n: "Chuông tay (linh)",  slot: "hand", col: "#d9a845", w: 9 },
+  redlamp:  { n: "Lồng đèn đỏ",        slot: "hand", col: "#c0392b", w: 10 },
+  lionhat:  { n: "Mũ lân con",         slot: "head", col: "#c8322a", w: 4 },
+  jade:     { n: "Chuỗi ngọc bích",    slot: "neck", col: "#4e9a7a", w: 8 },
   merit:    { n: "+30 công đức",       slot: null,   col: "#86c3ad", w: 20 }
 };
 const WHEEL = Object.keys(ITEMS);
@@ -1903,7 +2264,16 @@ function drawCrown(g, hx, hy, r) {
   }
   g.fillStyle = "#e3b04b"; roundRect(g, hx - r * .95, hy - r * .62, r * 1.9, 5, 2); g.fill();
 }
+function drawLionHat(g, hx, hy, r, back) {   // mũ lân con: đầu lân nhỏ đội trên đầu
+  const col = LION_COLS[0], y = hy - r * .55; for (let i = 0; i < 9; i++) { const a = Math.PI + i / 8 * Math.PI; g.fillStyle = i % 2 ? col[1] : "#fff8e4"; g.beginPath(); g.arc(hx + Math.cos(a) * r * 1.05, y + Math.sin(a) * r * .75, 3.6, 0, 7); g.fill(); }
+  g.fillStyle = col[0]; g.beginPath(); g.ellipse(hx, y - 2, r * .95, r * .62, 0, Math.PI, 0); g.fill(); g.fillStyle = col[1]; g.beginPath(); g.moveTo(hx - 2, y - r * .6); g.quadraticCurveTo(hx, y - r * 1.15, hx + 4, y - r * .95); g.quadraticCurveTo(hx + 1, y - r * .8, hx + 2, y - r * .6); g.fill();
+  if (back) return; [-1, 1].forEach(s => { g.fillStyle = "#fff"; g.beginPath(); g.ellipse(hx + s * r * .38, y - r * .2, 3.4, 3, 0, 0, 7); g.fill(); g.fillStyle = "#151515"; g.beginPath(); g.arc(hx + s * r * .38, y - r * .18, 1.6, 0, 7); g.fill(); });
+  g.fillStyle = "#d8dde2"; g.beginPath(); g.arc(hx, y - r * .45, 2.2, 0, 7); g.fill(); g.fillStyle = col[1]; g.fillRect(hx - r * .9, y - 2, r * 1.8, 3);
+}
 function drawHandItem(g, id, hx, hy, t) {
+  if (id === "lotus") { g.strokeStyle = "#4e7a45"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(hx, hy + 6); g.lineTo(hx, hy - 10); g.stroke(); for (let k = -2; k <= 2; k++) { g.fillStyle = k % 2 ? "#f4f0e6" : "#fffaf0"; g.beginPath(); g.ellipse(hx + k * 2.6, hy - 16 + Math.abs(k), 2.6, 7, k * .32, 0, 7); g.fill(); } g.fillStyle = "#f2c94c"; g.beginPath(); g.arc(hx, hy - 15, 1.6, 0, 7); g.fill(); }
+  if (id === "handbell") { g.strokeStyle = "#8a5a22"; g.lineWidth = 2.2; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx, hy - 12); g.stroke(); g.fillStyle = "#d9a845"; g.beginPath(); g.arc(hx, hy - 15, 3, 0, 7); g.fill(); const sw = Math.sin(t * 6) * .25; g.save(); g.translate(hx, hy); g.rotate(sw); g.fillStyle = "#d9a845"; g.beginPath(); g.moveTo(-6, 9); g.quadraticCurveTo(-6, 0, 0, -1); g.quadraticCurveTo(6, 0, 6, 9); g.closePath(); g.fill(); g.fillStyle = "#f6d482"; g.fillRect(-6, 8, 12, 2); g.restore(); }
+  if (id === "redlamp") { g.strokeStyle = "#5a3a22"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + 4, hy - 14); g.stroke(); const lx = hx + 4, ly = hy - 4 + Math.sin(t * 3) * 1.5; const lg = g.createRadialGradient(lx, ly, 1, lx, ly, 14); lg.addColorStop(0, "rgba(255,200,120,.55)"); lg.addColorStop(1, "rgba(255,160,80,0)"); g.fillStyle = lg; g.beginPath(); g.arc(lx, ly, 14, 0, 7); g.fill(); g.fillStyle = "#c0392b"; g.beginPath(); g.ellipse(lx, ly, 7, 8, 0, 0, 7); g.fill(); g.fillStyle = "#e3b04b"; g.fillRect(lx - 4, ly - 9, 8, 2); g.fillRect(lx - 4, ly + 7, 8, 2); g.strokeStyle = "#e3b04b"; g.lineWidth = 1; g.beginPath(); g.moveTo(lx, ly + 9); g.lineTo(lx, ly + 15); g.stroke(); }
   if (id === "staff") { g.strokeStyle = "#7a4a22"; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy + 40); g.lineTo(hx, hy - 70); g.stroke(); g.strokeStyle = "#d9a845"; g.lineWidth = 2.5; g.beginPath(); g.ellipse(hx, hy - 80, 8, 11, 0, 0, 7); g.stroke(); g.lineWidth = 1.6; [-1, 1].forEach(s => { for (let k = 0; k < 2; k++) { g.beginPath(); g.arc(hx + s * 9, hy - 76 + k * 7, 3, 0, 7); g.stroke(); } }); g.fillStyle = "#d9a845"; g.beginPath(); g.arc(hx, hy - 92, 3, 0, 7); g.fill(); }
   if (id === "bowl") { g.fillStyle = "#2a1d17"; g.beginPath(); g.ellipse(hx, hy - 2, 9, 4, 0, 0, Math.PI); g.fill(); g.fillStyle = "#4a3a30"; g.beginPath(); g.ellipse(hx, hy - 2, 9, 2.5, 0, 0, 7); g.fill(); }
   if (id === "lamp") { for (let k = -2; k <= 2; k++) { g.fillStyle = k % 2 ? "#f3a9be" : "#ffc6d4"; g.beginPath(); g.ellipse(hx + k * 3, hy - 6, 3, 7, k * .3, 0, 7); g.fill(); } const f = 1 + Math.sin(t * 9) * .15; g.fillStyle = "#ffd27a"; g.beginPath(); g.ellipse(hx, hy - 14, 2, 4 * f, 0, 0, 7); g.fill(); }
@@ -2080,7 +2450,7 @@ function onPeers(ch) {
     pp.pr = pr; const a = pr.ap || {}; pp.ap = { body: a.b | 0, skin: a.k | 0, hair: a.h | 0, outfit: a.o | 0, color: a.c | 0, acc: a.a | 0, eq: typeof a.e === "string" ? a.e.slice(0, 80) : "" }; pp.rig.useBeads = !!pr.bd;
     if (typeof pr.st === "string" && pr.st in SEQ && pr.st !== pp.st) { if (!fresh && (pr.st === "lay" || pr.st === "greet" || pr.st === "incense")) { npcFollow(pr.st); if (pr.st !== "greet") ritualMusic(SEQ[pr.st]); } pp.st = pr.st; const age = clamp((Date.now() - (+pr.st0 || Date.now())) / 1000, 0, 2); pp.st0 = pnow() - age * 1000; }
     pp.carry = ["food", "water", "veg", "fish", "turtle", "bird", "lantern", "broom"].includes(pr.cr) ? pr.cr : pr.cr === 1 ? "food" : null; handleInvites(pp, pr, fresh); handleGift(pp, pr); if ((+pr.hp || 0) !== pp.hp) { pp.hp = +pr.hp || 0; checkBellTier(); }
-    if (pr.ev && pr.ev.t !== pp.seenEv) { pp.seenEv = pr.ev.t; const d = Math.hypot(pp.x - me.x, pp.y - me.y); if (pr.ev.k === "bell") { bellSwing = 1; bigBell(Math.max(.2, 1 - d / 1600), 1 + bellTier * .12); } if (pr.ev.k === "incense") smokeBoost = .8; if (typeof pr.ev.k === "string" && pr.ev.k.startsWith("rel_") && RELEASE[pr.ev.k.slice(4)]) spawnFreed(pr.ev.k.slice(4), pp.x, pp.y); if (pr.ev.k === "lvup") toast(clip(pr.n, 16) + " thăng cấp " + ((pr.lv | 0) + 1)); }
+    if (pr.ev && pr.ev.t !== pp.seenEv) { pp.seenEv = pr.ev.t; const d = Math.hypot(pp.x - me.x, pp.y - me.y); if (pr.ev.k === "bell") { bellSwing = 1; bigBell(Math.max(.2, 1 - d / 1600), 1 + bellTier * .12); } if (pr.ev.k === "incense") smokeBoost = .8; if (pr.ev.k === "ln") pp.lnHit = pnow(); if (typeof pr.ev.k === "string" && pr.ev.k.startsWith("rel_") && RELEASE[pr.ev.k.slice(4)]) spawnFreed(pr.ev.k.slice(4), pp.x, pp.y); if (pr.ev.k === "lvup") toast(clip(pr.n, 16) + " thăng cấp " + ((pr.lv | 0) + 1)); }
     if (Array.isArray(pr.msgs)) pr.msgs.forEach(m => { if (!m || typeof m.id !== "string" || seenMsg.has(m.id)) return; seenMsg.add(m.id); const s = clip(m.s, 120); if (!s) return; const recent = Date.now() - (+m.t || 0) < 60000; if (!fresh || recent) pushChat({ n: clip(pr.n, 16), c: pp.ap.color, s, t: +m.t || Date.now() }); if (recent) pp.bubble = { s, until: pnow() + 6500 }; if (recent && !fresh && prof.name && s.toLowerCase().includes("@" + prof.name.toLowerCase())) { toast(clip(pr.n, 16) + " nhắc đến bạn: " + s); bowlBell(.25); } });
   });
   renderOnline(); if (sheetMode === "people") renderSheet();
@@ -2277,6 +2647,7 @@ function renderActs() {
   const key = me.st + lock + me.rig.useBeads + me.carry; if (key === actsKey) return; actsKey = key;
   const el = $("acts"); el.textContent = "";
   const roleSt = ["wash", "fire", "cook", "setm"].includes(me.st);
+  if (me.st === "lion" && me.ln) { el.textContent = ""; const R = LROLES[me.ln.r]; const bt = document.createElement("button"); bt.type = "button"; bt.className = "act beat on"; bt.innerHTML = '<i id="beatRing"></i><b></b>'; bt.querySelector("b").textContent = R.tap; const mv = document.createElement("span"); mv.id = "beatMove"; mv.textContent = "Bấm theo tiếng trống"; bt.append(mv); bt.addEventListener("pointerdown", e => { e.preventDefault(); lnTap(); }); el.append(bt); const st2 = document.createElement("button"); st2.type = "button"; st2.className = "act"; st2.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON.stop + '</svg><span>Rời đoàn</span>'; st2.addEventListener("click", () => lionLeave(false)); el.append(st2); return; }
   if (me.st === "exercise") { el.textContent = ""; const bt = document.createElement("button"); bt.type = "button"; bt.className = "act beat on"; bt.innerHTML = '<i id="beatRing"></i><b>Nhịp ♪</b>'; const mv = document.createElement("span"); mv.id = "beatMove"; bt.append(mv); bt.addEventListener("pointerdown", e => { e.preventDefault(); exTap(); }); el.append(bt); const st2 = document.createElement("button"); st2.type = "button"; st2.className = "act"; st2.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON.stop + '</svg><span>Dừng tập</span>'; st2.addEventListener("click", () => setState("idle")); el.append(st2); return; }
   const list = roleSt ? [{ id: "stop", l: "Dừng " + (me.role ? me.role.n.toLowerCase() : "việc"), fn: () => { setState("idle"); me.role = null; }, on: true }, { id: "work", l: "Đổi việc", fn: () => { setState("idle"); me.role = null; openCook(); } }] : me.st === "sweep" ? [{ id: "stop", l: "Dừng quét", fn: () => setState("idle"), on: true }] : me.st === "eat" || me.st === "read" ? [{ id: "stop", l: "Đứng dậy", fn: () => setState("idle"), on: true }] : seated ? [{ id: "stop", l: me.st === "chant" ? "Dừng tụng" : "Xả thiền", fn: endChant, on: true }].concat(me.st === "chant" ? [{ id: "beads", l: me.rig.useBeads ? "Gõ mõ" : "Lần chuỗi", fn: () => { me.rig.useBeads = !me.rig.useBeads; sendPresence({ bd: me.rig.useBeads }); actsKey = ""; renderActs(); } }] : [])
     : [{ id: "chant", l: "Tụng kinh", fn: ACT.chant }, { id: "lay", l: "Lạy Phật", fn: ACT.lay }, { id: "incense", l: "Thắp hương", fn: ACT.incense }, { id: "meditate", l: "Ngồi thiền", fn: ACT.meditate }, { id: "pray", l: "Chắp tay", fn: ACT.pray }, { id: "bell", l: "Thỉnh chuông", fn: ACT.bell }, { id: "work", l: "Việc chùa", fn: () => toggleWork($("picker").hidden || $("picker").dataset.mode !== "work") }].concat(me.carry === "food" ? [{ id: "feed", l: "Cho ăn", fn: ACT.feed, on: true }] : me.carry === "water" ? [{ id: "water", l: "Tưới", fn: gardenNext, on: true }] : me.carry === "veg" ? [{ id: "food", l: "Mang rau vào bếp", fn: bringVeg, on: true }] : RELEASE[me.carry] ? [{ id: "water", l: "Thả " + RELEASE[me.carry].n.toLowerCase(), fn: doRelease, on: true }] : []).concat([{ id: "greet", l: "Cúi chào", fn: ACT.greet }, { id: "wave", l: "Vẫy tay", fn: ACT.wave }]);
@@ -2328,6 +2699,7 @@ function renderSheet() {
     H3("Làm việc"); UL([TOUCH ? "Nút vàng tròn bên phải hiện việc làm được ở gần, bấm là làm." : "Chạm vào đồ vật để làm: lư hương, chuông, trống, chiêng, giếng, luống rau, quầy, bàn ăn…", "Nút Việc chùa: danh sách mọi việc, kèm tiến độ chung."]);
     H3("Các khu"); UL(["Chánh điện: lạy Phật (3 lạy trên thảm đỏ), thắp hương, tụng kinh ở bồ đoàn, ngồi thiền, đánh trống chiêng.", "Sân chính: thỉnh đại hồng chung ở gác chuông, quét lá, bảng vàng công đức.", "Trai đường: ngồi thọ trai; nấu xong bữa thì cơm được dọn ra.", "Nhà bếp: rửa rau, nhóm bếp, nấu, bày mâm (chia việc nhiều người); lấy mâm cơm đi phát.", "Vườn rau & giếng: gieo hạt, múc nước, tưới (3 lần là chín), thu hoạch, mang rau vào bếp.", "Vườn thiền: treo lời nguyện và tưới cây bồ đề, tượng Quan Âm, bảo tháp, sân tập thể dục.", "Sân lễ hội: tập thể dục đông người, sân khấu, đèn lồng.", "Tàng kinh các: ngồi đọc kinh, thỉnh thoảng hiện lời dạy.", "Bờ sông ngoài cổng: nhận cá, rùa, chim, hoa đăng ở quầy rồi ra bến thả."]);
     H3("Quét sân & nhà bếp"); UL(["Quét sân: ra Giá chổi (bên phải sân chính hoặc lối sang nhà bếp) lấy chổi tre, rồi bấm Quét sân chỗ có lá. Làm việc khác thì chổi tự dựng lại giá.", "Nhà bếp: chạm Bàn sơ chế hoặc kệ bếp để mở Thực đơn: nấu canh rau, đậu hũ sốt cà, rau xào nấm, nem chay, gỏi cuốn, bánh bao, xôi gấc, chè đậu xanh. Món nấu xong hiện lên bàn trai đường cho mọi người.", "Mang rau vừa thu hoạch vào nấu món có rau được thêm công đức.", "Việc vặt: vo gạo, bổ củi, nhặt rau ở bếp; lau bàn, rửa bát, pha trà ở trai đường."]);
+    H3("Đoàn lân ngày lễ"); UL(["Mỗi ngày trong game lúc 19:00 (ngày lễ thêm 9:00 sáng) có đoàn lân vào cổng tam quan: cờ ngũ sắc, Ông Địa, hai con lân, xe trống, chập chõa, thanh la. Ai trong chùa cũng thấy cùng một đoàn.", "Đoàn múa chào trước chánh điện (lân lạy 3 lạy), rồi sang Sân lễ hội múa và hái lộc trên cây nêu.", "Chạm vào đoàn hoặc Việc chùa → Đoàn lân để tham gia: múa lân (thêm con lân của bạn), đánh trống, chập chõa, hay đi theo cổ vũ.", "Bấm nút nhịp (hoặc chạm màn hình, phím cách) đúng tiếng trống để được công đức; múa lân lúc hái lộc được thưởng thêm và có thể nhận Mũ lân con."]);
     H3("Chơi cùng nhau"); UL(["Chạm vào người khác: chào nhau, rủ tập, rủ nấu ăn, rủ làm vườn, rủ phóng sanh, mời vào nhóm…", "Gõ @tên trong chat để gọi một người.", "Làm cùng người khác (nhất là người cùng nhóm) được nhiều công đức hơn."]);
     H3("Công đức"); UL(["Công đức đủ thì lên cấp và được 1 lượt vòng quay may mắn nhận vật phẩm.", "Bảng vàng có xếp hạng tuần này và tổng."]);
     return;
@@ -2414,9 +2786,11 @@ window.addEventListener("resize", resize);
 function onTap(e) {
   audio(); loadPendingTracks(); if (!me.entered) return; togglePicker(false); $("moreBox").hidden = true;
   const r = cv.getBoundingClientRect(), up = unproj(e.clientX - r.left, e.clientY - r.top), x = up.x, y = up.y;
+  if (me.st === "lion") { lnTap(); return; }
   if (me.st === "chant" || me.st === "meditate") { toast("Bấm \"" + (me.st === "chant" ? "Dừng tụng" : "Xả thiền") + "\" để đứng dậy"); return; }
   if (["sweep", "exercise", "wash", "fire", "cook", "setm", "eat", "read"].includes(me.st)) { setState("idle"); me.role = null; }
   if (busy()) return;
+  if (lionNow.on) for (const k of ["lion0", "lion1", "ongdia", "cart", "flagL", "flagR"]) { const lp = lionPos(k, lionNow.t); if (lp && Math.hypot(x - lp.x, y - lp.y) < 80) return openLionMenu(); }
   for (const bg2 of BEGGARS) if ((bg2.mode === "wander" || bg2.mode === "wait") && Math.hypot(x - bg2.x, y - bg2.y) < 50) { if (me.carry === "food") return giveFood(bg2); return toast("Người này đang đói. Lấy mâm cơm ở Nhà Trai rồi mang đến nhé."); }
   { const sx = e.clientX - r.left, sy = e.clientY - r.top; for (const h of WISH_HITS) if (Math.hypot(sx - h.x, sy - h.y) < h.r) return showWish(h.w); }
   if (Math.hypot(x - TREES[0][0], y - TREES[0][1]) < 90 && me.carry !== "water") return openWish();
@@ -2444,7 +2818,7 @@ function onTap(e) {
 }
 cv.addEventListener("pointerdown", e => { if (!fpOn) onTap(e); });
 cv.addEventListener("pointerup", e => { if (fpOn && drag && !drag.moved) onTap(e); });
-window.addEventListener("keydown", e => { if (document.activeElement && document.activeElement.tagName === "INPUT") { if (e.key === "Escape") document.activeElement.blur(); return; } if (!me.entered) return; const k = e.key.toLowerCase(); if (k === "enter") { $("chatIn").focus(); e.preventDefault(); return; } if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d"].includes(k)) { keys.add(k); e.preventDefault(); } });
+window.addEventListener("keydown", e => { if (document.activeElement && document.activeElement.tagName === "INPUT") { if (e.key === "Escape") document.activeElement.blur(); return; } if (!me.entered) return; const k = e.key.toLowerCase(); if (k === "enter") { $("chatIn").focus(); e.preventDefault(); return; } if (k === " " && me.st === "lion") { e.preventDefault(); if (!e.repeat) lnTap(); return; } if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d"].includes(k)) { keys.add(k); e.preventDefault(); } });
 window.addEventListener("keyup", e => keys.delete(e.key.toLowerCase()));
 window.addEventListener("blur", () => keys.clear());
 /* ===================== MODULE: điện thoại (cần điều khiển, nút tương tác, menu gọn, góc nhìn thứ nhất, tự giảm đồ họa) ===================== */
@@ -2486,15 +2860,16 @@ function findNearAct() {
   if (inPav(me.x, me.y) && inPav(me.x, me.y).k === "library") L.push({ d: 40, l: "Đọc kinh", fn: startRead });
   add(STALL.x, STALL.y + 40, 150, "Phóng sanh", openRelease);
   if (RELEASE[me.carry]) L.push({ d: me.y > 2300 ? 10 : 300, l: "Thả " + RELEASE[me.carry].n.toLowerCase(), fn: doRelease });
+  { const ln = lionNearest(); if (ln && ln.d < 320 && !me.ln) L.push({ d: Math.min(40, ln.d), l: "Tham gia đoàn lân", fn: openLionMenu }); }
   L.sort((a, b) => a.d - b.d); return L[0] || null;
 }
 function updateInteract(dt) {
   const b = $("btnUse"); if (!b) return; nearT -= dt; if (nearT > 0) return; nearT = .25;
-  nearAct = me.entered && !busy() ? findNearAct() : null; b.hidden = !nearAct || !TOUCH; if (nearAct && $("useTx").textContent !== nearAct.l) $("useTx").textContent = nearAct.l;
+  nearAct = me.entered && !busy() ? findNearAct() : null; b.hidden = !nearAct || !(TOUCH || fpOn); if (nearAct && $("useTx").textContent !== nearAct.l) $("useTx").textContent = nearAct.l;
 }
 // ---- góc nhìn thứ nhất: camera đặt ở mắt nhân vật, kéo màn hình lên/xuống để ngước nhìn ----
-let fpOn = LS.get("fp", false), fpK = fpOn ? 1 : 0, pitch = 0;
-function setFP(on) { fpOn = on; LS.set("fp", on); $("btnFP").setAttribute("aria-pressed", String(on)); pitch = 0; toast(on ? "Góc nhìn thứ nhất. Kéo màn hình lên/xuống để ngước nhìn; dùng cần điều khiển hoặc chạm sàn để đi." : "Góc nhìn thứ ba (sau lưng nhân vật)"); }
+let fpOn = LS.get("fp", false), fpK = fpOn ? 1 : 0, pitch = 0; document.body.classList.toggle("fp", fpOn);
+function setFP(on) { fpOn = on; document.body.classList.toggle("fp", on); LS.set("fp", on); $("btnFP").setAttribute("aria-pressed", String(on)); pitch = 0; toast(on ? "Góc nhìn thứ nhất. Kéo màn hình lên/xuống để ngước nhìn; dùng cần điều khiển hoặc chạm sàn để đi." : "Góc nhìn thứ ba (sau lưng nhân vật)"); }
 let drag = null;
 cv.addEventListener("pointerdown", e => { drag = { y: e.clientY, p: pitch, moved: false }; }, true);
 cv.addEventListener("pointermove", e => { if (!drag || !fpOn) return; const dy = e.clientY - drag.y; if (Math.abs(dy) > 8) drag.moved = true; if (drag.moved) pitch = clamp(drag.p + dy * 1.2, -vh * .2, vh * .9); });
@@ -2521,7 +2896,7 @@ $("btnMore").addEventListener("click", () => openMore($("moreBox").hidden));
 $("btnUse").addEventListener("click", () => { audio(); if (nearAct) nearAct.fn(); nearT = 0; });
 
 function chips(id, list, key, sw) { const el = $(id); el.textContent = ""; list.forEach((v, i) => { const b = document.createElement("button"); b.type = "button"; if (sw) { b.className = "sw"; b.style.background = v[1]; b.title = v[0]; b.setAttribute("aria-label", v[0]); } else b.textContent = v; b.setAttribute("aria-pressed", String(prof[key] === i)); b.addEventListener("click", () => { prof[key] = i; if (key === "outfit" && i === 3) prof.hair = 0; chipsAll(); }); el.append(b); }); }
-function itemChips() { const el = $("oItems"); if (!el) return; el.textContent = ""; const own = Object.keys(inv).filter(k => ITEMS[k] && ITEMS[k].slot); if (!own.length) { const s = document.createElement("span"); s.className = "note"; s.textContent = "Chưa có. Lên cấp để quay nhận tích trượng, mũ Tỳ Lư, y cà sa gấm vàng, hào quang…"; el.append(s); return; } own.forEach(k => { const it = ITEMS[k], b = document.createElement("button"); b.type = "button"; b.textContent = it.n; b.setAttribute("aria-pressed", String(equip[it.slot] === k)); b.addEventListener("click", () => { equip[it.slot] = equip[it.slot] === k ? "" : k; saveEquip(); }); el.append(b); }); }
+function itemChips() { const el = $("oItems"); if (!el) return; el.textContent = ""; const own = Object.keys(inv).filter(k => ITEMS[k] && ITEMS[k].slot); if (!own.length) { const s = document.createElement("span"); s.className = "note"; s.textContent = "Chưa có. Lên cấp để quay nhận tích trượng, mũ Tỳ Lư, y cà sa gấm vàng, hào quang, bông sen, chuông tay, lồng đèn đỏ, chuỗi ngọc bích; múa lân lúc hái lộc để nhận mũ lân con…"; el.append(s); return; } own.forEach(k => { const it = ITEMS[k], b = document.createElement("button"); b.type = "button"; b.textContent = it.n; b.setAttribute("aria-pressed", String(equip[it.slot] === k)); b.addEventListener("click", () => { equip[it.slot] = equip[it.slot] === k ? "" : k; saveEquip(); }); el.append(b); }); }
 function chipsAll() { itemChips(); chips("oBody", BODIES, "body"); chips("oSkin", SKINS, "skin", true); chips("oHair", HAIRS, "hair"); chips("oOutfit", OUTFITS, "outfit"); chips("oColor", COLORS, "color", true); chips("oAcc", ACCS, "acc"); }
 chipsAll(); $("nameIn").value = prof.name;
 let editing = true;
@@ -2544,7 +2919,7 @@ function frame() {
     pp.dir = ["up", "down", "left", "right"].includes(pp.pr.dir) ? pp.pr.dir : "down";
     animateRig(pp.rig, pp.st, (t - pp.st0) / 1000, dt, d > 1.5 && pp.st === "walk", pp.voice ? pp.voice.state() : null);
   });
-  updateClock(dt); updatePeerAudio(); updateFX(dt); updateNPC(dt); updateRitual(dt); updateBeggars(dt); updateWorkers(dt); updateSpark(dt); updateFreed(dt); ambTick(dt);
+  updateClock(dt); updatePeerAudio(); updateFX(dt); updateNPC(dt); updateRitual(dt); updateBeggars(dt); updateWorkers(dt); updateLion(dt); updateSpark(dt); updateFreed(dt); ambTick(dt);
   // camera đứng sau lưng nhân vật, nhìn về phía bàn thờ
   viewK += ((viewOn ? 1 : 0) - viewK) * Math.min(1, dt * 1.6); fpK += ((fpOn && me.entered ? 1 : 0) - fpK) * Math.min(1, dt * 3);
   gfxTick(dt * 1000); updateInteract(dt);
@@ -2717,6 +3092,7 @@ function render(ts, t) {
   addBuildings(add, ts);
   RITUAL.forEach(n => add(n.y, () => { upright(n.x, n.y); drawChar(g, n, ts); }));
   WORKERS.forEach(n => add(n.y, () => { upright(n.x, n.y); drawChar(g, n, ts); }));
+  addLionItems(add, ts);
   KWORKERS.forEach(n => add(n.y, withFade(n.x, n.y, () => { upright(n.x, n.y); drawChar(g, n, ts); })));
   PLOTS.forEach(pl => add(pl.y - 30, () => drawPlot(pl, ts)));
   add(WELL.y, () => { upright(WELL.x, WELL.y); g.translate(WELL.x, WELL.y); g.scale(1.6, 1.6); g.translate(-WELL.x, -WELL.y); drawWell(g); });
@@ -2726,9 +3102,9 @@ function render(ts, t) {
   LANTERNS.forEach(([x, y]) => add(y, () => { upright(x, y); drawLantern(g, x, y); }));
   add(GATE.y, () => { g.globalAlpha *= clamp((CAM.ycam - GATE.y - 230) / 220, 0, 1); if (g.globalAlpha > .02) { upright(GATE.x, GATE.y); drawGate(g); } });   // cổng mờ dần khi ở sát camera
   if (!inside) add(HALL.y1, () => { g.globalAlpha *= clamp((CAM.ycam - HALL.y1 - 60) / 200, 0, 1); if (g.globalAlpha > .02) drawFrontFacade(); }, true);
-  peers.forEach(pp => { if (pp.ap) add(pp.y, () => { const p = upright(pp.x, pp.y); drawChar(g, { x: pp.x, y: pp.y, dir: pp.dir, ap: pp.ap, rig: pp.rig, carry: pp.carry }, ts); tags.push([p, pp.ap, clip(pp.pr.n, 16), pp.pr.lv | 0, pp.bubble, false, false, me.grp && pp.pr.grp === me.grp]); }); });
+  peers.forEach(pp => { if (pp.ap) add(pp.y, () => { const p = upright(pp.x, pp.y); if (!drawLnPlayer({ x: pp.x, y: pp.y, dir: pp.dir, ap: pp.ap, rig: pp.rig }, pp.pr.ln, pp.lnRig, pnow() - (pp.lnHit || 0), ts)) drawChar(g, { x: pp.x, y: pp.y, dir: pp.dir, ap: pp.ap, rig: pp.rig, carry: pp.carry }, ts); tags.push([p, pp.ap, clip(pp.pr.n, 16), pp.pr.lv | 0, pp.bubble, false, false, me.grp && pp.pr.grp === me.grp]); }); });
   NPCS.forEach(n => add(n.y, () => { upright(n.x, n.y); drawChar(g, n, ts); }));   // NPC không hiện tên
-  if ((me.entered || editing) && fpK < .5) add(me.y, () => { const p = upright(me.x, me.y); drawChar(g, { x: me.x, y: me.y, dir: me.entered ? me.dir : "down", ap: prof, rig: me.rig, carry: me.carry }, ts); if (me.entered) tags.push([p, prof, prof.name, levelOf(merit), me.bubble, true]); }, true);
+  if ((me.entered || editing) && fpK < .5) add(me.y, () => { const p = upright(me.x, me.y); if (!(me.st === "lion" && drawLnPlayer({ x: me.x, y: me.y, dir: me.dir, ap: prof, rig: me.rig }, me.ln, me.lnRig, pnow() - (me.lnHit || 0), ts))) drawChar(g, { x: me.x, y: me.y, dir: me.entered ? me.dir : "down", ap: prof, rig: me.rig, carry: me.carry }, ts); if (me.entered) tags.push([p, prof, prof.name, levelOf(merit), me.bubble, true]); }, true);
   items.sort((a, b) => a.y - b.y).forEach(i => { const d = CAM.ycam - i.y; g.globalAlpha = i.solid ? 1 : clamp((d - 50 - viewK * 260) / 140, viewK > .5 ? 0 : .3, 1); i.f(); g.globalAlpha = 1; });
   // khói hương, lá rơi, +công đức (chiếu theo độ cao)
   screenT();
